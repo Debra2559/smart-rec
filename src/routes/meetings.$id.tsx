@@ -140,8 +140,9 @@ function MeetingDetailPage() {
           </div>
         )}
 
-        <div className="mb-4 flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
+        <div className="mb-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 [scrollbar-width:none] [&::-webkit-scrollbar]{display:none}">
           {([
+            ["overview", "概览", LayoutGrid],
             ["transcript", "逐字稿", ScrollText],
             ["mindmap", "思维导图", GitBranch],
             ["decisions", "决议与待办", ListChecks],
@@ -151,7 +152,7 @@ function MeetingDetailPage() {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-xs transition-colors ${
+              className={`flex shrink-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-xs transition-colors ${
                 tab === key ? "bg-accent font-medium text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -160,6 +161,16 @@ function MeetingDetailPage() {
             </button>
           ))}
         </div>
+
+        {tab === "overview" && (
+          <Overview
+            rec={rec}
+            segments={data?.segments ?? []}
+            commitments={data?.commitments ?? []}
+            speakers={speakers}
+            onJump={setTab}
+          />
+        )}
 
         {tab === "transcript" && (
           <section className="rounded-xl border border-border bg-card p-5">
