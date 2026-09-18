@@ -267,9 +267,18 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
             .object({ valence: z.number().min(-2).max(2), label: z.string() })
             .nullable()
             .describe("整体情绪；无明显情绪时为 null"),
+          commitments: z
+            .array(
+              z.object({
+                direction: z.enum(["mine", "theirs"]),
+                text: z.string(),
+                counterpart: z.string(),
+              }),
+            )
+            .describe("说出口的承诺，用概括的话表述；mine=用户答应别人，theirs=别人答应用户"),
         }),
       }),
-      prompt: `以下是陪伴设备刚刚听到的一段日常对话（转写仅在本次请求内存中存在）。请提取：1) 值得记录的事件（用你自己的话概括，绝不引用原文）；2) 待办事项；3) 整体情绪。\n\n对话内容：\n${text}`,
+      prompt: `以下是陪伴设备刚刚听到的一段日常对话（转写仅在本次请求内存中存在）。请提取：1) 值得记录的事件（用你自己的话概括，绝不引用原文）；2) 待办事项；3) 整体情绪；4) 双向承诺（同样用概括表述，不得照搬原句）。\n\n对话内容：\n${text}`,
       providerOptions: {
         openai: {
           forceReasoning: true,
