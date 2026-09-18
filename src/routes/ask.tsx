@@ -115,7 +115,7 @@ function AskPage() {
         <header className="flex items-center gap-3 pt-6 pb-4">
           <img src={logo} alt="回响" className="h-8 w-8" />
           <div>
-            <h1 className="font-display text-xl font-bold leading-none">问问回响</h1>
+            <h1 className="font-display text-xl font-semibold leading-none">问问回响</h1>
             <p className="mt-1 text-xs text-muted-foreground">只基于你自己的记录回答</p>
           </div>
         </header>
@@ -187,7 +187,7 @@ function AskPage() {
                   >
                     <Mic className="h-3.5 w-3.5 shrink-0 opacity-70" />
                     <span className="truncate">{r.title}</span>
-                    <span className="ml-auto shrink-0 font-mono text-[10px] text-muted-foreground">
+                    <span className="ml-auto shrink-0 text-[10px] tabular-nums text-muted-foreground">
                       {new Date(r.occurred_at).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" })}
                     </span>
                   </button>

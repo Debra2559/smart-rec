@@ -82,8 +82,8 @@ function MeetingDetailPage() {
           <ArrowLeft className="h-3.5 w-3.5" /> 返回会议列表
         </Link>
         <header className="mb-6">
-          <h1 className="font-display text-2xl font-bold">{rec.title}</h1>
-          <p className="mt-1 font-mono text-xs text-muted-foreground">
+          <h1 className="font-display text-2xl font-semibold">{rec.title}</h1>
+          <p className="mt-1 text-xs tabular-nums text-muted-foreground">
             {new Date(rec.occurred_at).toLocaleString("zh-CN")} · {fmtDuration(rec.duration_sec)} ·{" "}
             {SOURCE_LABEL[rec.source] ?? rec.source} ·{" "}
             {rec.status === "done" ? "已完成" : rec.status === "transcribing" ? "转写中…" : rec.status === "failed" ? "转写失败" : "录制中"}
@@ -162,7 +162,7 @@ function MeetingDetailPage() {
                 const idx = speakers.indexOf(s.speaker_label);
                 return (
                   <div key={s.id} className="flex gap-4">
-                    <div className="w-12 shrink-0 pt-0.5 text-right font-mono text-[10px] leading-5 text-muted-foreground">
+                    <div className="w-12 shrink-0 pt-0.5 text-right text-[10px] leading-5 tabular-nums text-muted-foreground">
                       {fmtMs(s.start_ms)}
                     </div>
                     <div className="min-w-0">
@@ -197,7 +197,7 @@ function MeetingDetailPage() {
               <ul className="divide-y divide-border">
                 {rec.decisions.map((d, i) => (
                   <li key={i} className="flex items-baseline gap-3 py-3 text-sm">
-                    <span className="font-mono text-xs text-primary">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="text-xs tabular-nums text-primary">{String(i + 1).padStart(2, "0")}</span>
                     <span className="flex-1">{d.text}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">
                       {d.owner}{d.due ? ` · ${d.due}` : ""}
@@ -217,12 +217,12 @@ function MeetingDetailPage() {
               rec.insights.map((c, i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-primary/25 bg-gradient-to-br from-primary/8 to-card p-5"
+                  className="rounded-xl border border-border bg-card p-5"
                 >
                   <div className="flex items-start gap-3">
                     <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <div>
-                      <h3 className="font-display text-base font-semibold leading-snug">{c.title}</h3>
+                      <h3 className="font-display text-base font-medium leading-snug">{c.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/85">{c.text}</p>
                     </div>
                   </div>
@@ -308,9 +308,9 @@ function ResearchPanel({
             {report.split("\n").map((line, i) => {
               const t = line.trim();
               if (!t) return null;
-              if (t.startsWith("### ")) return <h4 key={i} className="pt-2 font-display text-base font-semibold">{t.slice(4)}</h4>;
-              if (t.startsWith("## ")) return <h3 key={i} className="pt-3 font-display text-lg font-bold">{t.slice(3)}</h3>;
-              if (t.startsWith("# ")) return <h2 key={i} className="font-display text-xl font-bold">{t.slice(2)}</h2>;
+              if (t.startsWith("### ")) return <h4 key={i} className="pt-2 font-display text-base font-medium">{t.slice(4)}</h4>;
+              if (t.startsWith("## ")) return <h3 key={i} className="pt-3 font-display text-lg font-semibold">{t.slice(3)}</h3>;
+              if (t.startsWith("# ")) return <h2 key={i} className="font-display text-xl font-semibold">{t.slice(2)}</h2>;
               if (t.startsWith("- ") || t.startsWith("* "))
                 return <p key={i} className="pl-4">· {t.slice(2).replace(/\*\*/g, "")}</p>;
               return <p key={i}>{t.replace(/\*\*/g, "")}</p>;

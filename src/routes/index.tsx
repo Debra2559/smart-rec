@@ -114,10 +114,10 @@ function TodayPage() {
         {/* 头部 */}
         <header className="mb-9 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="font-mono text-[11px] tracking-widest text-muted-foreground">
+            <p className="text-[11px] font-medium text-muted-foreground">
               {fmtDate(new Date())}
             </p>
-            <h1 className="mt-1 font-display text-[28px] font-bold tracking-tight md:text-3xl">
+            <h1 className="mt-2 font-display text-[28px] font-semibold leading-tight md:text-3xl">
               {greeting()}，今天有 {pending.length} 件事待办
             </h1>
           </div>
@@ -135,7 +135,7 @@ function TodayPage() {
           {/* 状态条 */}
           <div className="col-span-2 flex items-center gap-2.5 rounded-2xl bg-card px-5 py-3.5 md:col-span-4">
             <Radio className="h-4 w-4 shrink-0 text-primary" />
-            <span className="text-xs font-semibold text-accent-foreground">陪伴模式运行中</span>
+            <span className="text-xs font-medium text-accent-foreground">陪伴模式运行中</span>
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
             <span className="ml-auto text-[10px] text-accent-foreground/70">
               不保存音频与原文
@@ -145,7 +145,7 @@ function TodayPage() {
           {/* 待办 —— 主块 */}
           <section className="col-span-2 row-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
             <div className="mb-4 flex items-baseline justify-between">
-              <h2 className="font-display text-base font-bold tracking-tight">待办</h2>
+              <h2 className="font-display text-base font-semibold">待办</h2>
               <span className="text-[10px] text-muted-foreground">从对话中自动捕捉</span>
             </div>
             <ul className="space-y-3">
@@ -174,7 +174,7 @@ function TodayPage() {
                         {t.title}
                       </p>
                       {t.due_at && (
-                        <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="mt-0.5 text-[10px] tabular-nums text-muted-foreground">
                           {t.source === "meeting" ? "会议" : t.source === "manual" ? "手动" : "捕捉"} ·{" "}
                           {new Date(t.due_at).toLocaleDateString("zh-CN", {
                             month: "numeric",
@@ -200,7 +200,7 @@ function TodayPage() {
                 <s.icon className="h-3.5 w-3.5 text-primary" />
                 {s.label}
               </div>
-              <div className="mt-2 font-display text-2xl font-bold tracking-tight">
+              <div className="mt-2 font-display text-2xl font-semibold tabular-nums">
                 {s.value ?? "—"}
                 <span className="ml-1 font-sans text-[11px] font-medium text-muted-foreground">
                   {s.unit}
@@ -213,7 +213,7 @@ function TodayPage() {
           {hrSeries.length > 0 && (
             <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
               <div className="mb-2 flex items-baseline justify-between">
-                <h2 className="font-display text-sm font-bold tracking-tight">心率走势</h2>
+                <h2 className="font-display text-sm font-semibold">心率走势</h2>
                 <span className="text-[10px] text-muted-foreground">与事件时间线对齐</span>
               </div>
               <div className="h-32">
@@ -251,7 +251,7 @@ function TodayPage() {
           {emotionSeries.length > 0 && (
             <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
               <div className="mb-2 flex items-baseline justify-between">
-                <h2 className="font-display text-sm font-bold tracking-tight">情绪曲线</h2>
+                <h2 className="font-display text-sm font-semibold">情绪曲线</h2>
                 <span className="text-[10px] text-muted-foreground">
                   {emotions[emotions.length - 1]?.label ?? "—"}
                 </span>
@@ -297,7 +297,7 @@ function TodayPage() {
           {/* 事件时间线 */}
           <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7 md:col-span-4">
             <div className="mb-4 flex items-baseline justify-between">
-              <h2 className="font-display text-base font-bold tracking-tight">事件时间线</h2>
+              <h2 className="font-display text-base font-semibold">事件时间线</h2>
               <span className="text-[10px] text-muted-foreground">只有摘要，没有原文</span>
             </div>
             <div className="timeline-rail space-y-5 pl-7 md:columns-2 md:gap-8 md:[&>article]:break-inside-avoid">
@@ -305,7 +305,7 @@ function TodayPage() {
                 <article key={e.id} className="relative">
                   <span className="absolute -left-7 top-1.5 h-3 w-3 rounded-full border-2 border-primary bg-card" />
                   <div className="flex items-center gap-2">
-                    <time className="font-mono text-[11px] font-medium text-primary">
+                    <time className="text-[11px] font-medium tabular-nums text-primary">
                       {fmtTime(e.occurred_at)}
                     </time>
                     <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-secondary-foreground">
@@ -315,7 +315,7 @@ function TodayPage() {
                       <span className="text-[10px] text-muted-foreground">{e.mood}</span>
                     )}
                   </div>
-                  <h3 className="mt-1 text-sm font-semibold">{e.title}</h3>
+                  <h3 className="mt-1 text-sm font-medium">{e.title}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{e.summary}</p>
                 </article>
               ))}
@@ -331,11 +331,11 @@ function TodayPage() {
           {data?.daySummary && (
             <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-10 md:col-span-4 md:p-8">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+                <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
                   <Sparkles className="h-4 w-4 text-primary" />
                   今日复盘
                 </h2>
-                <span className="font-mono text-[11px] text-muted-foreground">
+                <span className="text-[11px] tabular-nums text-muted-foreground">
                   心情指数 {data.daySummary.mood_score ?? "—"}
                 </span>
               </div>

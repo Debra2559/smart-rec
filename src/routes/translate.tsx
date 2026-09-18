@@ -139,7 +139,7 @@ function TranslatePage() {
     <AppShell>
       <div className="mx-auto flex h-[calc(100dvh-4rem)] max-w-3xl flex-col px-4 py-6 md:h-screen md:px-8">
         <header className="mb-4">
-          <h1 className="flex items-center gap-2 font-display text-2xl font-bold">
+          <h1 className="flex items-center gap-2 font-display text-2xl font-semibold">
             <Languages className="h-5 w-5 text-primary" />
             实时翻译
           </h1>
