@@ -1,7 +1,16 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ShieldCheck, Radio, Mic, Watch, Trash2, LogOut } from "lucide-react";
+import {
+  ShieldCheck,
+  Radio,
+  Mic,
+  Watch,
+  Trash2,
+  LogOut,
+  CalendarDays,
+  Languages,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,7 +46,25 @@ function SettingsPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-        <h1 className="mb-6 font-display text-3xl font-bold">设置与隐私</h1>
+        <h1 className="mb-1 font-display text-[28px] font-bold tracking-tight">我的</h1>
+        <p className="mb-5 text-sm text-muted-foreground">{user?.email}</p>
+
+        <div className="mb-6 grid grid-cols-2 gap-3">
+          <Link
+            to="/review"
+            className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            <CalendarDays className="h-4 w-4 text-primary" />
+            月度回顾
+          </Link>
+          <Link
+            to="/translate"
+            className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            <Languages className="h-4 w-4 text-primary" />
+            实时翻译
+          </Link>
+        </div>
 
         {/* 隐私契约 */}
         <section className="mb-6 rounded-xl border border-border bg-card p-5">

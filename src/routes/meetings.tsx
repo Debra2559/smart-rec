@@ -1,17 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Mic, ChevronRight, Loader2, AlertCircle, Plus, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Mic, ChevronRight, Loader2, AlertCircle, Plus, Search, X, Languages } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { fetchRecordings, fmtDuration, fmtTime, SOURCE_LABEL } from "@/lib/data";
 import { RecordDialog } from "@/components/RecordDialog";
 
 export const Route = createFileRoute("/meetings")({
+  validateSearch: (search: Record<string, unknown>): { rec?: string } =>
+    typeof search["rec"] === "string" ? { rec: search["rec"] } : {},
   head: () => ({
     meta: [
-      { title: "会议 · 回响" },
+      { title: "记录 · 回响" },
       { name: "description", content: "深度录音：逐字稿、思维导图、决议与待办。" },
-      { property: "og:title", content: "会议 · 回响" },
+      { property: "og:title", content: "记录 · 回响" },
       { property: "og:description", content: "深度录音：逐字稿、思维导图、决议与待办。" },
     ],
   }),
@@ -20,10 +22,19 @@ export const Route = createFileRoute("/meetings")({
 
 function MeetingsPage() {
   const { data } = useQuery({ queryKey: ["recordings"], queryFn: fetchRecordings });
-  const [recording, setRecording] = useState(false);
+  const { rec } = Route.useSearch();
+  const navigate = useNavigate();
+  const [recording, setRecording] = useState(rec === "1");
   const [q, setQ] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (rec === "1") {
+      setRecording(true);
+      navigate({ to: "/meetings", search: {}, replace: true });
+    }
+  }, [rec, navigate]);
 
   const all = data ?? [];
   const allTags = useMemo(() => {
@@ -51,20 +62,31 @@ function MeetingsPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
-        <header className="mb-6 flex items-end justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-bold">会议</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              深度录音 · 完整保存音频与逐字稿，仅你可见
-            </p>
+        <header className="mb-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="font-display text-[28px] font-bold tracking-tight">记录</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                深度录音 · 完整保存音频与逐字稿，仅你可见
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                to="/translate"
+                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card px-4 py-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary sm:flex-none"
+              >
+                <Languages className="h-3.5 w-3.5" />
+                实时翻译
+              </Link>
+              <button
+                onClick={() => setRecording(true)}
+                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90 sm:flex-none"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                深度录音
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setRecording(true)}
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            开始深度录音
-          </button>
         </header>
 
         <div className="mb-3 flex items-center gap-2 rounded-lg border border-input bg-card px-3 py-2">
