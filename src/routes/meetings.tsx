@@ -7,11 +7,14 @@ import { fetchRecordings, fmtDuration, fmtTime, SOURCE_LABEL } from "@/lib/data"
 import { RecordDialog } from "@/components/RecordDialog";
 
 export const Route = createFileRoute("/meetings")({
+  validateSearch: (search: Record<string, unknown>): { rec?: string } => ({
+    rec: typeof search.rec === "string" ? search.rec : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "会议 · 回响" },
+      { title: "记录 · 回响" },
       { name: "description", content: "深度录音：逐字稿、思维导图、决议与待办。" },
-      { property: "og:title", content: "会议 · 回响" },
+      { property: "og:title", content: "记录 · 回响" },
       { property: "og:description", content: "深度录音：逐字稿、思维导图、决议与待办。" },
     ],
   }),
@@ -20,10 +23,19 @@ export const Route = createFileRoute("/meetings")({
 
 function MeetingsPage() {
   const { data } = useQuery({ queryKey: ["recordings"], queryFn: fetchRecordings });
-  const [recording, setRecording] = useState(false);
+  const { rec } = Route.useSearch();
+  const navigate = useNavigate();
+  const [recording, setRecording] = useState(rec === "1");
   const [q, setQ] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (rec === "1") {
+      setRecording(true);
+      navigate({ to: "/meetings", search: {}, replace: true });
+    }
+  }, [rec, navigate]);
 
   const all = data ?? [];
   const allTags = useMemo(() => {
