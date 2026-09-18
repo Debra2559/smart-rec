@@ -63,24 +63,24 @@ function MeetingsPage() {
     <AppShell>
       <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
         <header className="mb-6">
-          <div className="flex items-end justify-between gap-3">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="font-display text-[28px] font-bold tracking-tight">记录</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 深度录音 · 完整保存音频与逐字稿，仅你可见
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <Link
                 to="/translate"
-                className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card px-4 py-2.5 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary sm:flex-none"
               >
                 <Languages className="h-3.5 w-3.5" />
                 实时翻译
               </Link>
               <button
                 onClick={() => setRecording(true)}
-                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90"
+                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90 sm:flex-none"
               >
                 <Plus className="h-3.5 w-3.5" />
                 深度录音
