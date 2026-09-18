@@ -132,21 +132,28 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    /* 只留两处极淡的光，绝大部分是空白 */
     background-image:
-      radial-gradient(70% 45% at 5% 2%, oklch(0.87 0.11 215 / 85%) 0%, transparent 68%),
-      radial-gradient(65% 45% at 98% 6%, oklch(0.89 0.1 325 / 80%) 0%, transparent 70%),
-      radial-gradient(80% 45% at 15% 100%, oklch(0.92 0.11 105 / 70%) 0%, transparent 70%),
-      radial-gradient(70% 50% at 92% 92%, oklch(0.85 0.11 278 / 80%) 0%, transparent 70%);
+      radial-gradient(52% 34% at 12% -4%, oklch(0.93 0.035 268 / 55%) 0%, transparent 72%),
+      radial-gradient(46% 30% at 96% 104%, oklch(0.94 0.03 205 / 45%) 0%, transparent 74%);
     background-attachment: fixed;
     background-repeat: no-repeat;
+    letter-spacing: 0.005em;
   }
 
-  /* 玻璃卡片：所有卡片背景自动带柔光模糊 */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
   [class*="bg-card"],
   [class*="bg-sidebar"],
   [class*="bg-popover"] {
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
@@ -158,27 +165,25 @@
   text-wrap: balance;
 }
 
-/* 柔光玻璃层 */
+/* 轻玻璃层：白、细边、极淡投影 */
 @utility glass {
-  background: oklch(1 0 0 / 60%);
-  border: 1px solid oklch(1 0 0 / 70%);
-  box-shadow:
-    0 1px 0 0 oklch(1 0 0 / 80%) inset,
-    0 18px 40px -24px oklch(0.4 0.08 275 / 35%);
-  backdrop-filter: blur(18px) saturate(140%);
+  background: oklch(1 0 0 / 78%);
+  border: 1px solid oklch(0.3 0.02 275 / 7%);
+  box-shadow: 0 16px 40px -32px oklch(0.3 0.03 275 / 40%);
+  backdrop-filter: blur(14px);
 }
 
-/* 柔和渐变色块（用于强调卡片） */
+/* 极淡的色调提示，仅用于强调一处 */
 @utility tint-sky {
-  background-image: linear-gradient(140deg, oklch(0.93 0.06 215 / 85%), oklch(0.97 0.03 255 / 75%));
+  background-image: linear-gradient(140deg, oklch(0.975 0.014 215 / 90%), oklch(0.995 0.004 260 / 80%));
 }
 
 @utility tint-lilac {
-  background-image: linear-gradient(140deg, oklch(0.92 0.07 285 / 85%), oklch(0.97 0.03 320 / 70%));
+  background-image: linear-gradient(140deg, oklch(0.972 0.018 280 / 90%), oklch(0.995 0.004 300 / 80%));
 }
 
 @utility tint-peach {
-  background-image: linear-gradient(140deg, oklch(0.94 0.06 60 / 85%), oklch(0.97 0.03 20 / 70%));
+  background-image: linear-gradient(140deg, oklch(0.978 0.016 60 / 90%), oklch(0.995 0.004 30 / 80%));
 }
 
 /* 时间线竖线 */
@@ -194,3 +199,4 @@
     background: var(--color-border);
   }
 }
+
