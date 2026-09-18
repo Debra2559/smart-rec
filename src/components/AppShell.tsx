@@ -48,7 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       {/* 侧边导航（桌面） */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="flex items-center gap-2.5 px-5 pt-6 pb-7">
@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             to="/meetings"
             search={{ rec: "1" }}
             aria-label="开始深度录音"
-            className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform active:scale-95"
+            className="absolute -top-7 left-1/2 flex h-16 w-16 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[oklch(0.72_0.14_275)] to-[oklch(0.62_0.16_300)] text-primary-foreground ring-4 ring-[oklch(1_0_0/70%)] shadow-[0_12px_30px_-8px_oklch(0.55_0.15_285/55%)] transition-transform active:scale-95"
           >
             <Plus className="h-6 w-6" />
           </Link>
