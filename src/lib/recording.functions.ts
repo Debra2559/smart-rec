@@ -186,7 +186,7 @@ export const processRecording = createServerFn({ method: "POST" })
             .from("people")
             .update({
               mentions: (existing.mentions ?? 1) + 1,
-              context: p.context || undefined,
+              context: p.context ?? "",
               follow_up: p.follow_up || null,
               last_seen_at: new Date().toISOString(),
             })
