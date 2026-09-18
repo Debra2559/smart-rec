@@ -19,7 +19,7 @@ import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as MeetingsIdRouteImport } from './routes/meetings.$id'
+import { Route as MeetingsIdRouteImport } from './routes/meetings_.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -72,9 +72,9 @@ const ApiChatRoute = ApiChatRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeetingsIdRoute = MeetingsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => MeetingsRoute,
+  id: '/meetings_/$id',
+  path: '/meetings/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -83,7 +83,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
   '/knowledge': typeof KnowledgeRoute
-  '/meetings': typeof MeetingsRouteWithChildren
+  '/meetings': typeof MeetingsRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/translate': typeof TranslateRoute
@@ -96,7 +96,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
   '/knowledge': typeof KnowledgeRoute
-  '/meetings': typeof MeetingsRouteWithChildren
+  '/meetings': typeof MeetingsRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/translate': typeof TranslateRoute
@@ -110,12 +110,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
   '/knowledge': typeof KnowledgeRoute
-  '/meetings': typeof MeetingsRouteWithChildren
+  '/meetings': typeof MeetingsRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/translate': typeof TranslateRoute
   '/api/chat': typeof ApiChatRoute
-  '/meetings/$id': typeof MeetingsIdRoute
+  '/meetings_/$id': typeof MeetingsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,7 +156,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/translate'
     | '/api/chat'
-    | '/meetings/$id'
+    | '/meetings_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,11 +165,12 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   GrowthRoute: typeof GrowthRoute
   KnowledgeRoute: typeof KnowledgeRoute
-  MeetingsRoute: typeof MeetingsRouteWithChildren
+  MeetingsRoute: typeof MeetingsRoute
   ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
   TranslateRoute: typeof TranslateRoute
   ApiChatRoute: typeof ApiChatRoute
+  MeetingsIdRoute: typeof MeetingsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -244,27 +245,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/meetings/$id': {
-      id: '/meetings/$id'
-      path: '/$id'
+    '/meetings_/$id': {
+      id: '/meetings_/$id'
+      path: '/meetings/$id'
       fullPath: '/meetings/$id'
       preLoaderRoute: typeof MeetingsIdRouteImport
-      parentRoute: typeof MeetingsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface MeetingsRouteChildren {
-  MeetingsIdRoute: typeof MeetingsIdRoute
-}
-
-const MeetingsRouteChildren: MeetingsRouteChildren = {
-  MeetingsIdRoute: MeetingsIdRoute,
-}
-
-const MeetingsRouteWithChildren = MeetingsRoute._addFileChildren(
-  MeetingsRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -272,11 +261,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   GrowthRoute: GrowthRoute,
   KnowledgeRoute: KnowledgeRoute,
-  MeetingsRoute: MeetingsRouteWithChildren,
+  MeetingsRoute: MeetingsRoute,
   ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
   TranslateRoute: TranslateRoute,
   ApiChatRoute: ApiChatRoute,
+  MeetingsIdRoute: MeetingsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
