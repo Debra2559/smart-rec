@@ -124,12 +124,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             <TabLink key={item.to} {...item} active={isActive(item.to)} />
           ))}
           <Link
-            to="/meetings"
-            search={{ rec: "1" }}
-            aria-label="开始深度录音"
+            to="/ask"
+            aria-label="问一问"
             className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background/90 shadow-[0_10px_26px_-14px_oklch(0.4_0.08_278/50%)] transition-transform active:scale-95"
           >
-            <Plus className="h-5 w-5" />
+            <MessageCircle className="h-5 w-5" />
           </Link>
 
         </div>
