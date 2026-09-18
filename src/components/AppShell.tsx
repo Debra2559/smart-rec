@@ -23,6 +23,7 @@ const NAV = [
 ] as const;
 
 const SECONDARY = [
+  { to: "/knowledge", label: "知识库", icon: BookOpen },
   { to: "/translate", label: "实时翻译", icon: Languages },
   { to: "/review", label: "月度回顾", icon: CalendarDays },
 ] as const;
