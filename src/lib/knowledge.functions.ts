@@ -68,7 +68,7 @@ export const importKnowledge = createServerFn({ method: "POST" })
       },
     });
 
-    const parsed = await result.experimental_output;
+    const parsed = await result.output;
     const items = (parsed?.items ?? []).slice(0, 20);
     if (items.length === 0) return { inserted: 0 };
 
