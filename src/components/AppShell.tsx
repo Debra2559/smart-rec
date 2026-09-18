@@ -8,7 +8,6 @@ import {
   Radio,
   Languages,
   CalendarDays,
-  Plus,
   Sprout,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
@@ -19,12 +18,11 @@ import logo from "@/assets/logo.png";
 const NAV = [
   { to: "/", label: "今天", icon: LayoutGrid },
   { to: "/meetings", label: "记录", icon: Mic },
-  { to: "/ask", label: "问答", icon: MessageCircle },
+  { to: "/growth", label: "成长", icon: Sprout },
   { to: "/settings", label: "我的", icon: User },
 ] as const;
 
 const SECONDARY = [
-  { to: "/growth", label: "成长", icon: Sprout },
   { to: "/translate", label: "实时翻译", icon: Languages },
   { to: "/review", label: "月度回顾", icon: CalendarDays },
 ] as const;
@@ -114,7 +112,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* 底部导航（移动端）· 4 个标签 + 中央录音键 */}
+      {/* 底部导航（移动端）· 4 个标签 + 中央问答键 */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-sidebar-border bg-sidebar/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
         <div className="relative flex items-stretch">
           {NAV.slice(0, 2).map((item) => (
@@ -125,12 +123,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             <TabLink key={item.to} {...item} active={isActive(item.to)} />
           ))}
           <Link
-            to="/meetings"
-            search={{ rec: "1" }}
-            aria-label="开始深度录音"
+            to="/ask"
+            aria-label="问一问"
             className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background/90 shadow-[0_10px_26px_-14px_oklch(0.4_0.08_278/50%)] transition-transform active:scale-95"
           >
-            <Plus className="h-5 w-5" />
+            <MessageCircle className="h-5 w-5" />
           </Link>
 
         </div>
