@@ -7,8 +7,12 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { messages } = (await request.json()) as { messages?: UIMessage[] };
+        const { messages, recordingIds } = (await request.json()) as {
+          messages?: UIMessage[];
+          recordingIds?: string[];
+        };
         if (!Array.isArray(messages)) return new Response("Messages are required", { status: 400 });
+        const focus = Array.isArray(recordingIds) ? recordingIds.filter(Boolean).slice(0, 5) : [];
 
         const key = process.env["LOVABLE_API_KEY"];
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
@@ -36,7 +40,7 @@ export const Route = createFileRoute("/api/chat")({
             sb.from("health_metrics").select("recorded_at, metric, value, unit").order("recorded_at", { ascending: false }).limit(40),
             sb.from("emotion_points").select("recorded_at, valence, label, note").order("recorded_at", { ascending: false }).limit(20),
           ]);
-          context = [
+          const parts = [
             "## 事件时间线",
             ...(events.data ?? []).map((e) => `- [${e.occurred_at}] ${e.title}：${e.summary}`),
             "## 待办",
@@ -47,7 +51,31 @@ export const Route = createFileRoute("/api/chat")({
             ...(health.data ?? []).map((h) => `- [${h.recorded_at}] ${h.metric}: ${h.value}${h.unit}`),
             "## 情绪记录",
             ...(emotions.data ?? []).map((e) => `- [${e.recorded_at}] ${e.label}（${e.valence}）${e.note ?? ""}`),
-          ].join("\n");
+          ];
+
+          // 用户 @ 指定了某几条录音：把这些录音的逐字稿全文作为重点上下文
+          if (focus.length > 0) {
+            const [focusRecs, segs] = await Promise.all([
+              sb.from("recordings").select("id, title, occurred_at, summary, decisions").in("id", focus),
+              sb
+                .from("transcript_segments")
+                .select("recording_id, seq, speaker_label, text")
+                .in("recording_id", focus)
+                .order("seq")
+                .limit(600),
+            ]);
+            parts.push("## 用户本次特别指定（@）的录音全文，优先依据这些内容回答");
+            for (const r of focusRecs.data ?? []) {
+              parts.push(`### 《${r.title}》（${r.occurred_at}）`);
+              if (r.summary) parts.push(`摘要：${r.summary}`);
+              const lines = (segs.data ?? [])
+                .filter((s) => s.recording_id === r.id)
+                .map((s) => `${s.speaker_label}：${s.text}`);
+              parts.push(lines.join("\n").slice(0, 16000));
+            }
+          }
+
+          context = parts.join("\n");
         }
 
         const lovable = createOpenAI({

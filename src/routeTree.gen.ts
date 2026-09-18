@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as MeetingsIdRouteImport } from './routes/meetings.$id'
 
@@ -48,6 +49,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TranslateRoute = TranslateRouteImport.update({
+  id: '/translate',
+  path: '/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/translate': typeof TranslateRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/translate': typeof TranslateRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
+  '/translate': typeof TranslateRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/review'
     | '/settings'
+    | '/translate'
     | '/api/chat'
     | '/meetings/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/review'
     | '/settings'
+    | '/translate'
     | '/api/chat'
     | '/meetings/$id'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/review'
     | '/settings'
+    | '/translate'
     | '/api/chat'
     | '/meetings/$id'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   MeetingsRoute: typeof MeetingsRouteWithChildren
   ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
+  TranslateRoute: typeof TranslateRoute
   ApiChatRoute: typeof ApiChatRoute
 }
 
@@ -177,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/translate': {
+      id: '/translate'
+      path: '/translate'
+      fullPath: '/translate'
+      preLoaderRoute: typeof TranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -213,6 +233,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingsRoute: MeetingsRouteWithChildren,
   ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
+  TranslateRoute: TranslateRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport

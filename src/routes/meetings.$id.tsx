@@ -1,9 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Search, Loader2, GitBranch, ListChecks, ScrollText } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  ArrowLeft,
+  Search,
+  Loader2,
+  GitBranch,
+  ListChecks,
+  ScrollText,
+  Lightbulb,
+  FlaskConical,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { fetchRecording, fmtDuration, fmtMs, type MindmapNode } from "@/lib/data";
+import { fetchRecording, fmtDuration, fmtMs, SOURCE_LABEL, type MindmapNode } from "@/lib/data";
+import { generateDeepResearch } from "@/lib/recording.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/meetings/$id")({
@@ -20,7 +31,9 @@ const SPEAKER_COLORS = ["text-primary", "text-chart-2", "text-chart-3", "text-ch
 
 function MeetingDetailPage() {
   const { id } = Route.useParams();
-  const [tab, setTab] = useState<"transcript" | "mindmap" | "decisions">("transcript");
+  const [tab, setTab] = useState<"transcript" | "mindmap" | "decisions" | "insights" | "research">(
+    "transcript",
+  );
   const [q, setQ] = useState("");
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
@@ -72,8 +85,18 @@ function MeetingDetailPage() {
           <h1 className="font-display text-2xl font-bold">{rec.title}</h1>
           <p className="mt-1 font-mono text-xs text-muted-foreground">
             {new Date(rec.occurred_at).toLocaleString("zh-CN")} · {fmtDuration(rec.duration_sec)} ·{" "}
+            {SOURCE_LABEL[rec.source] ?? rec.source} ·{" "}
             {rec.status === "done" ? "已完成" : rec.status === "transcribing" ? "转写中…" : rec.status === "failed" ? "转写失败" : "录制中"}
           </p>
+          {(rec.tags ?? []).length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {rec.tags.map((t) => (
+                <span key={t} className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] text-primary">
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
           {audioUrl && (
             <audio controls src={audioUrl} className="mt-4 w-full" />
           )}
@@ -102,11 +125,13 @@ function MeetingDetailPage() {
           </div>
         )}
 
-        <div className="mb-4 flex gap-1 rounded-lg border border-border bg-card p-1">
+        <div className="mb-4 flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
           {([
             ["transcript", "逐字稿", ScrollText],
             ["mindmap", "思维导图", GitBranch],
             ["decisions", "决议与待办", ListChecks],
+            ["insights", "顿悟", Lightbulb],
+            ["research", "深度研究", FlaskConical],
           ] as const).map(([key, label, Icon]) => (
             <button
               key={key}
@@ -185,8 +210,115 @@ function MeetingDetailPage() {
             )}
           </section>
         )}
+
+        {tab === "insights" && (
+          <section className="space-y-3">
+            {(rec.insights ?? []).length > 0 ? (
+              rec.insights.map((c, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-primary/25 bg-gradient-to-br from-primary/8 to-card p-5"
+                >
+                  <div className="flex items-start gap-3">
+                    <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div>
+                      <h3 className="font-display text-base font-semibold leading-snug">{c.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/85">{c.text}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="rounded-xl border border-border bg-card py-8 text-center text-sm text-muted-foreground">
+                顿悟卡片将在转写完成后生成。
+              </p>
+            )}
+          </section>
+        )}
+
+        {tab === "research" && <ResearchPanel rec={rec} onDone={() => refetch()} />}
       </div>
     </AppShell>
+  );
+}
+
+function ResearchPanel({
+  rec,
+  onDone,
+}: {
+  rec: { id: string; research_intro: string | null; research_topics: { title: string; angle: string }[]; research_report: string | null };
+  onDone: () => void;
+}) {
+  const run = useServerFn(generateDeepResearch);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [report, setReport] = useState<string | null>(rec.research_report);
+
+  async function start(topic: string) {
+    setBusy(topic);
+    setError(null);
+    try {
+      const res = await run({ data: { recordingId: rec.id, topic } });
+      setReport(res.report);
+      onDone();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "生成失败");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <section className="space-y-4">
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h2 className="text-sm font-medium text-primary">深度研究</h2>
+        <p className="mt-2 text-sm leading-relaxed text-foreground/85">
+          {rec.research_intro ?? "这场对话完成转写后，会在这里给出值得展开研究的选题。"}
+        </p>
+        <div className="mt-4 space-y-2">
+          {(rec.research_topics ?? []).map((t) => (
+            <div
+              key={t.title}
+              className="flex items-start gap-3 rounded-lg border border-border bg-background p-3"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium">{t.title}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">{t.angle}</div>
+              </div>
+              <button
+                onClick={() => start(t.title)}
+                disabled={busy !== null}
+                className="flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
+              >
+                {busy === t.title ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FlaskConical className="h-3.5 w-3.5" />}
+                生成报告
+              </button>
+            </div>
+          ))}
+        </div>
+        {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
+        {busy && (
+          <p className="mt-3 text-xs text-muted-foreground">正在检索与推演，约需 30 秒…</p>
+        )}
+      </div>
+
+      {report && (
+        <article className="rounded-xl border border-border bg-card p-6">
+          <div className="space-y-2 text-sm leading-relaxed text-foreground/90">
+            {report.split("\n").map((line, i) => {
+              const t = line.trim();
+              if (!t) return null;
+              if (t.startsWith("### ")) return <h4 key={i} className="pt-2 font-display text-base font-semibold">{t.slice(4)}</h4>;
+              if (t.startsWith("## ")) return <h3 key={i} className="pt-3 font-display text-lg font-bold">{t.slice(3)}</h3>;
+              if (t.startsWith("# ")) return <h2 key={i} className="font-display text-xl font-bold">{t.slice(2)}</h2>;
+              if (t.startsWith("- ") || t.startsWith("* "))
+                return <p key={i} className="pl-4">· {t.slice(2).replace(/\*\*/g, "")}</p>;
+              return <p key={i}>{t.replace(/\*\*/g, "")}</p>;
+            })}
+          </div>
+        </article>
+      )}
+    </section>
   );
 }
 

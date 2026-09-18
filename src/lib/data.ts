@@ -37,6 +37,8 @@ export type DaySummaryRow = {
   content: string;
   mood_score: number | null;
 };
+export type InsightCard = { title: string; text: string };
+export type ResearchTopic = { title: string; angle: string };
 export type RecordingRow = {
   id: string;
   user_id: string | null;
@@ -48,8 +50,21 @@ export type RecordingRow = {
   summary: string | null;
   decisions: { text: string; owner: string; due: string }[];
   mindmap: MindmapNode | null;
+  tags: string[];
+  source: string;
+  insights: InsightCard[];
+  research_topics: ResearchTopic[];
+  research_intro: string | null;
+  research_report: string | null;
 };
 export type MindmapNode = { label: string; children?: MindmapNode[] };
+
+export const SOURCE_LABEL: Record<string, string> = {
+  pods: "耳机",
+  speaker: "扬声器",
+  call: "通话",
+  phone: "手机",
+};
 export type SegmentRow = {
   id: string;
   seq: number;
