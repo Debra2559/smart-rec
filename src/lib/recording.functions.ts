@@ -314,6 +314,17 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
         label: structured.emotion.label,
       });
     }
+    const passiveCommitments = structured.commitments.filter((c) => c.text.trim());
+    if (passiveCommitments.length > 0) {
+      await context.supabase.from("commitments").insert(
+        passiveCommitments.map((c) => ({
+          user_id: context.userId,
+          direction: c.direction,
+          text: c.text,
+          counterpart: c.counterpart ?? "",
+        })),
+      );
+    }
     // 转写文本 text 到此随请求结束被丢弃，不落库、不落盘。
     return { ok: true, events: structured.events.length, todos: structured.todos.length };
   });
