@@ -41,6 +41,50 @@ export type Database = {
         }
         Relationships: []
       }
+      commitments: {
+        Row: {
+          counterpart: string
+          created_at: string
+          direction: string
+          done: boolean
+          due_at: string | null
+          id: string
+          recording_id: string | null
+          text: string
+          user_id: string | null
+        }
+        Insert: {
+          counterpart?: string
+          created_at?: string
+          direction?: string
+          done?: boolean
+          due_at?: string | null
+          id?: string
+          recording_id?: string | null
+          text: string
+          user_id?: string | null
+        }
+        Update: {
+          counterpart?: string
+          created_at?: string
+          direction?: string
+          done?: boolean
+          due_at?: string | null
+          id?: string
+          recording_id?: string | null
+          text?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commitments_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       day_summaries: {
         Row: {
           content: string
@@ -131,6 +175,36 @@ export type Database = {
         }
         Relationships: []
       }
+      growth_reports: {
+        Row: {
+          content: string
+          created_at: string
+          habits: Json
+          highlights: Json
+          id: string
+          period_start: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          habits?: Json
+          highlights?: Json
+          id?: string
+          period_start: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          habits?: Json
+          highlights?: Json
+          id?: string
+          period_start?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       health_metrics: {
         Row: {
           id: string
@@ -155,6 +229,42 @@ export type Database = {
           unit?: string
           user_id?: string | null
           value?: number
+        }
+        Relationships: []
+      }
+      people: {
+        Row: {
+          context: string
+          created_at: string
+          follow_up: string | null
+          id: string
+          last_seen_at: string
+          mentions: number
+          name: string
+          relation: string
+          user_id: string | null
+        }
+        Insert: {
+          context?: string
+          created_at?: string
+          follow_up?: string | null
+          id?: string
+          last_seen_at?: string
+          mentions?: number
+          name: string
+          relation?: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: string
+          created_at?: string
+          follow_up?: string | null
+          id?: string
+          last_seen_at?: string
+          mentions?: number
+          name?: string
+          relation?: string
+          user_id?: string | null
         }
         Relationships: []
       }

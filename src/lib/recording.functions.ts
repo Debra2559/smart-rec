@@ -76,6 +76,30 @@ export const processRecording = createServerFn({ method: "POST" })
             insights: z
               .array(z.object({ title: z.string(), text: z.string() }))
               .describe("2-4 张「顿悟」卡片：这场对话里最值得停下来想的洞察，title 是一句金句，text 是 60 字以内解释"),
+            commitments: z
+              .array(
+                z.object({
+                  direction: z.enum(["mine", "theirs"]),
+                  text: z.string(),
+                  counterpart: z.string(),
+                  due: z.string(),
+                }),
+              )
+              .describe(
+                "对话里说出口的承诺。direction=mine 表示用户答应别人，theirs 表示别人答应用户；counterpart 是对方称呼；due 为 YYYY-MM-DD，无法确定时填空字符串",
+              ),
+            people: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  relation: z.string(),
+                  context: z.string(),
+                  follow_up: z.string(),
+                }),
+              )
+              .describe(
+                "对话里出现的关键人物。relation 如「直属上级」「跨部门同事」；context 是 40 字以内的关系观察；follow_up 是建议的下一步，没有就填空字符串",
+              ),
             research_intro: z
               .string()
               .describe("一段 80 字以内的开场，说明从这场对话里看到的关键张力，用第二人称对用户说"),
@@ -95,7 +119,7 @@ export const processRecording = createServerFn({ method: "POST" })
             }),
           }),
         }),
-        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 起标题与话题标签；2) 按语义将全文切分为带时间码的段落（单发言人即可）；3) 150 字以内摘要；4) 决议与行动项；5) 顿悟卡片；6) 深度研究开场与选题；7) 三级思维导图。\n\n转写全文：\n${text}`,
+        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 起标题与话题标签；2) 按语义将全文切分为带时间码的段落（单发言人即可）；3) 150 字以内摘要；4) 决议与行动项；5) 顿悟卡片；6) 深度研究开场与选题；7) 三级思维导图；8) 双向承诺（我答应别人的 / 别人答应我的）；9) 关键人物与关系观察。\n\n转写全文：\n${text}`,
         providerOptions: {
           openai: {
             forceReasoning: true,
@@ -125,6 +149,7 @@ export const processRecording = createServerFn({ method: "POST" })
       const todos = structured.decisions
         .filter((d) => d.text.trim())
         .map((d) => ({
+          user_id: context.userId,
           title: d.text,
           source: "meeting",
           due_at: null as string | null,
@@ -132,6 +157,51 @@ export const processRecording = createServerFn({ method: "POST" })
       if (todos.length > 0) {
         await context.supabase.from("todos").insert(todos);
       }
+
+      // 双向承诺台账
+      const commitments = structured.commitments
+        .filter((c) => c.text.trim())
+        .map((c) => ({
+          user_id: context.userId,
+          direction: c.direction,
+          text: c.text,
+          counterpart: c.counterpart ?? "",
+          due_at: /^\d{4}-\d{2}-\d{2}$/.test(c.due) ? new Date(`${c.due}T12:00:00Z`).toISOString() : null,
+          recording_id: data.recordingId,
+        }));
+      if (commitments.length > 0) {
+        await context.supabase.from("commitments").insert(commitments);
+      }
+
+      // 关键人物：已存在则累计提及次数，否则新建
+      for (const p of structured.people.filter((p) => p.name.trim())) {
+        const { data: existing } = await context.supabase
+          .from("people")
+          .select("id, mentions")
+          .eq("user_id", context.userId)
+          .eq("name", p.name)
+          .maybeSingle();
+        if (existing) {
+          await context.supabase
+            .from("people")
+            .update({
+              mentions: (existing.mentions ?? 1) + 1,
+              context: p.context ?? "",
+              follow_up: p.follow_up || null,
+              last_seen_at: new Date().toISOString(),
+            })
+            .eq("id", existing.id);
+        } else {
+          await context.supabase.from("people").insert({
+            user_id: context.userId,
+            name: p.name,
+            relation: p.relation || "同事",
+            context: p.context ?? "",
+            follow_up: p.follow_up || null,
+          });
+        }
+      }
+
 
       await context.supabase
         .from("recordings")
@@ -197,9 +267,18 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
             .object({ valence: z.number().min(-2).max(2), label: z.string() })
             .nullable()
             .describe("整体情绪；无明显情绪时为 null"),
+          commitments: z
+            .array(
+              z.object({
+                direction: z.enum(["mine", "theirs"]),
+                text: z.string(),
+                counterpart: z.string(),
+              }),
+            )
+            .describe("说出口的承诺，用概括的话表述；mine=用户答应别人，theirs=别人答应用户"),
         }),
       }),
-      prompt: `以下是陪伴设备刚刚听到的一段日常对话（转写仅在本次请求内存中存在）。请提取：1) 值得记录的事件（用你自己的话概括，绝不引用原文）；2) 待办事项；3) 整体情绪。\n\n对话内容：\n${text}`,
+      prompt: `以下是陪伴设备刚刚听到的一段日常对话（转写仅在本次请求内存中存在）。请提取：1) 值得记录的事件（用你自己的话概括，绝不引用原文）；2) 待办事项；3) 整体情绪；4) 双向承诺（同样用概括表述，不得照搬原句）。\n\n对话内容：\n${text}`,
       providerOptions: {
         openai: {
           forceReasoning: true,
@@ -215,6 +294,7 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
     if (structured.events.length > 0) {
       await context.supabase.from("events").insert(
         structured.events.map((e) => ({
+          user_id: context.userId,
           occurred_at: now,
           title: e.title,
           summary: e.summary,
@@ -226,7 +306,9 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
     if (structured.todos.length > 0) {
       await context.supabase
         .from("todos")
-        .insert(structured.todos.map((t) => ({ title: t.title, source: "passive" })));
+        .insert(
+          structured.todos.map((t) => ({ user_id: context.userId, title: t.title, source: "passive" })),
+        );
     }
     if (structured.emotion) {
       await context.supabase.from("emotion_points").insert({
@@ -234,6 +316,17 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
         valence: structured.emotion.valence,
         label: structured.emotion.label,
       });
+    }
+    const passiveCommitments = structured.commitments.filter((c) => c.text.trim());
+    if (passiveCommitments.length > 0) {
+      await context.supabase.from("commitments").insert(
+        passiveCommitments.map((c) => ({
+          user_id: context.userId,
+          direction: c.direction,
+          text: c.text,
+          counterpart: c.counterpart ?? "",
+        })),
+      );
     }
     // 转写文本 text 到此随请求结束被丢弃，不落库、不落盘。
     return { ok: true, events: structured.events.length, todos: structured.todos.length };
