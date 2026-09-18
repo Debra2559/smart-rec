@@ -9,6 +9,7 @@ import {
   Languages,
   CalendarDays,
   Plus,
+  Sprout,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,7 @@ const NAV = [
 ] as const;
 
 const SECONDARY = [
+  { to: "/growth", label: "成长", icon: Sprout },
   { to: "/translate", label: "实时翻译", icon: Languages },
   { to: "/review", label: "月度回顾", icon: CalendarDays },
 ] as const;
