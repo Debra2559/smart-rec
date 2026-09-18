@@ -308,7 +308,7 @@ function WeekTrend() {
       .map((d, i) => ({ i, v: d[key] }))
       .filter((p): p is { i: number; v: number } => p.v !== null)
       .map((p) => ({
-        x: (p.i / Math.max(days.length - 1, 1)) * W,
+        x: 8 + (p.i / Math.max(days.length - 1, 1)) * (W - 16),
         y: H - (p.v / 100) * H,
       }));
   }
