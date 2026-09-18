@@ -8,7 +8,6 @@ import {
   Radio,
   Languages,
   CalendarDays,
-  Plus,
   Sprout,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
