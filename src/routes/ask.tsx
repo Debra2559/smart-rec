@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
+import { useQuery } from "@tanstack/react-query";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AtSign, X, Mic } from "lucide-react";
+import { fetchRecordings } from "@/lib/data";
 import {
   Conversation,
   ConversationContent,
