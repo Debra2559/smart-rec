@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/chat")({
               },
             },
           });
-          const [events, todos, recordings, health, emotions] = await Promise.all([
+          const [events, todos, recordings, health, emotions, knowledge] = await Promise.all([
             sb.from("events").select("occurred_at, title, summary, category").order("occurred_at", { ascending: false }).limit(30),
             sb.from("todos").select("title, due_at, done, source").order("created_at", { ascending: false }).limit(30),
             sb.from("recordings").select("occurred_at, title, summary, decisions").eq("status", "done").order("occurred_at", { ascending: false }).limit(10),
