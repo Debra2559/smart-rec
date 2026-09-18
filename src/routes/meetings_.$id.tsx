@@ -31,7 +31,7 @@ import {
 import { generateDeepResearch } from "@/lib/recording.functions";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/meetings/$id")({
+export const Route = createFileRoute("/meetings_/$id")({
   head: () => ({
     meta: [
       { title: "会议详情 · 回响" },
