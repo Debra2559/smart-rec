@@ -42,12 +42,13 @@ export const Route = createFileRoute("/meetings/$id")({
 });
 
 const SPEAKER_COLORS = ["text-primary", "text-chart-2", "text-chart-3", "text-chart-4"];
+const SPEAKER_BG = ["bg-primary", "bg-chart-2", "bg-chart-3", "bg-chart-4"];
+
+type TabKey = "overview" | "transcript" | "mindmap" | "decisions" | "insights" | "research";
 
 function MeetingDetailPage() {
   const { id } = Route.useParams();
-  const [tab, setTab] = useState<"transcript" | "mindmap" | "decisions" | "insights" | "research">(
-    "transcript",
-  );
+  const [tab, setTab] = useState<TabKey>("overview");
   const [q, setQ] = useState("");
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
