@@ -110,9 +110,9 @@ function TodayPage() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-10">
+      <div className="mx-auto max-w-5xl px-5 py-10 md:px-10 md:py-16">
         {/* 头部 */}
-        <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <header className="mb-9 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="font-mono text-[11px] tracking-widest text-muted-foreground">
               {fmtDate(new Date())}
@@ -131,9 +131,9 @@ function TodayPage() {
         </header>
 
         {/* 便当格 */}
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {/* 状态条 */}
-          <div className="col-span-2 flex items-center gap-2.5 rounded-2xl bg-accent px-4 py-3 md:col-span-4">
+          <div className="col-span-2 flex items-center gap-2.5 rounded-2xl bg-card px-5 py-3.5 md:col-span-4">
             <Radio className="h-4 w-4 shrink-0 text-primary" />
             <span className="text-xs font-semibold text-accent-foreground">陪伴模式运行中</span>
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
@@ -143,7 +143,7 @@ function TodayPage() {
           </div>
 
           {/* 待办 —— 主块 */}
-          <section className="col-span-2 row-span-2 rounded-2xl border border-border bg-card p-5">
+          <section className="col-span-2 row-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
             <div className="mb-4 flex items-baseline justify-between">
               <h2 className="font-display text-base font-bold tracking-tight">待办</h2>
               <span className="text-[10px] text-muted-foreground">从对话中自动捕捉</span>
@@ -211,7 +211,7 @@ function TodayPage() {
 
           {/* 心率 */}
           {hrSeries.length > 0 && (
-            <section className="col-span-2 rounded-2xl border border-border bg-card p-5">
+            <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="font-display text-sm font-bold tracking-tight">心率走势</h2>
                 <span className="text-[10px] text-muted-foreground">与事件时间线对齐</span>
@@ -249,7 +249,7 @@ function TodayPage() {
 
           {/* 情绪 */}
           {emotionSeries.length > 0 && (
-            <section className="col-span-2 rounded-2xl border border-border bg-card p-5">
+            <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7">
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="font-display text-sm font-bold tracking-tight">情绪曲线</h2>
                 <span className="text-[10px] text-muted-foreground">
@@ -295,7 +295,7 @@ function TodayPage() {
           )}
 
           {/* 事件时间线 */}
-          <section className="col-span-2 rounded-2xl border border-border bg-card p-5 md:col-span-4">
+          <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-7 md:col-span-4">
             <div className="mb-4 flex items-baseline justify-between">
               <h2 className="font-display text-base font-bold tracking-tight">事件时间线</h2>
               <span className="text-[10px] text-muted-foreground">只有摘要，没有原文</span>
@@ -329,7 +329,7 @@ function TodayPage() {
 
           {/* 晚间复盘 */}
           {data?.daySummary && (
-            <section className="col-span-2 rounded-2xl border border-primary/25 bg-accent/60 p-5 md:col-span-4 md:p-8">
+            <section className="col-span-2 rounded-2xl border border-border bg-card p-6 md:p-10 md:col-span-4 md:p-8">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
                   <Sparkles className="h-4 w-4 text-primary" />

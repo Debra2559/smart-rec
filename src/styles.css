@@ -50,42 +50,43 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* 回响 · 柔光极光主题（Aurora Pastel） */
+/* 回响 · 静谧留白（Quiet Light）：极简近白 + 一处柔光，靠留白与层级呼吸 */
 :root {
-  --radius: 1.5rem;
-  --background: oklch(0.985 0.012 250);
-  --foreground: oklch(0.28 0.05 275);
-  --card: oklch(1 0 0 / 68%);
-  --card-foreground: oklch(0.28 0.05 275);
-  --popover: oklch(0.995 0.005 260 / 95%);
-  --popover-foreground: oklch(0.28 0.05 275);
-  --primary: oklch(0.63 0.16 272);
-  --primary-foreground: oklch(0.99 0.005 250);
-  --secondary: oklch(0.955 0.025 265 / 75%);
-  --secondary-foreground: oklch(0.36 0.06 275);
-  --muted: oklch(0.96 0.018 255 / 75%);
-  --muted-foreground: oklch(0.56 0.04 272);
-  --accent: oklch(0.93 0.045 280 / 80%);
-  --accent-foreground: oklch(0.44 0.12 275);
-  --destructive: oklch(0.66 0.16 18);
-  --destructive-foreground: oklch(0.99 0.005 250);
-  --border: oklch(1 0 0 / 70%);
-  --input: oklch(0.3 0.05 275 / 12%);
-  --ring: oklch(0.7 0.13 275);
-  --chart-1: oklch(0.68 0.14 272);
-  --chart-2: oklch(0.78 0.11 205);
-  --chart-3: oklch(0.76 0.12 330);
-  --chart-4: oklch(0.82 0.12 95);
-  --chart-5: oklch(0.78 0.11 155);
-  --sidebar: oklch(1 0 0 / 62%);
-  --sidebar-foreground: oklch(0.32 0.05 275);
-  --sidebar-primary: oklch(0.63 0.16 272);
-  --sidebar-primary-foreground: oklch(0.99 0.005 250);
-  --sidebar-accent: oklch(0.93 0.045 280 / 80%);
-  --sidebar-accent-foreground: oklch(0.44 0.12 275);
-  --sidebar-border: oklch(1 0 0 / 60%);
-  --sidebar-ring: oklch(0.7 0.13 275);
+  --radius: 1.25rem;
+  --background: oklch(0.99 0.003 265);
+  --foreground: oklch(0.26 0.02 275);
+  --card: oklch(1 0 0 / 82%);
+  --card-foreground: oklch(0.26 0.02 275);
+  --popover: oklch(0.997 0.002 265 / 97%);
+  --popover-foreground: oklch(0.26 0.02 275);
+  --primary: oklch(0.58 0.12 278);
+  --primary-foreground: oklch(0.99 0.003 265);
+  --secondary: oklch(0.968 0.006 270 / 80%);
+  --secondary-foreground: oklch(0.36 0.025 275);
+  --muted: oklch(0.972 0.005 270 / 80%);
+  --muted-foreground: oklch(0.58 0.015 275);
+  --accent: oklch(0.955 0.015 278 / 85%);
+  --accent-foreground: oklch(0.42 0.08 278);
+  --destructive: oklch(0.63 0.14 20);
+  --destructive-foreground: oklch(0.99 0.003 265);
+  --border: oklch(0.3 0.02 275 / 8%);
+  --input: oklch(0.3 0.02 275 / 10%);
+  --ring: oklch(0.68 0.09 278);
+  --chart-1: oklch(0.62 0.12 278);
+  --chart-2: oklch(0.74 0.08 215);
+  --chart-3: oklch(0.76 0.07 330);
+  --chart-4: oklch(0.8 0.07 100);
+  --chart-5: oklch(0.76 0.07 160);
+  --sidebar: oklch(1 0 0 / 70%);
+  --sidebar-foreground: oklch(0.3 0.02 275);
+  --sidebar-primary: oklch(0.58 0.12 278);
+  --sidebar-primary-foreground: oklch(0.99 0.003 265);
+  --sidebar-accent: oklch(0.955 0.015 278 / 85%);
+  --sidebar-accent-foreground: oklch(0.42 0.08 278);
+  --sidebar-border: oklch(0.3 0.02 275 / 7%);
+  --sidebar-ring: oklch(0.68 0.09 278);
 }
+
 
 .dark {
   --background: oklch(0.17 0.02 258);
@@ -131,21 +132,28 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    /* 只留两处极淡的光，绝大部分是空白 */
     background-image:
-      radial-gradient(70% 45% at 5% 2%, oklch(0.87 0.11 215 / 85%) 0%, transparent 68%),
-      radial-gradient(65% 45% at 98% 6%, oklch(0.89 0.1 325 / 80%) 0%, transparent 70%),
-      radial-gradient(80% 45% at 15% 100%, oklch(0.92 0.11 105 / 70%) 0%, transparent 70%),
-      radial-gradient(70% 50% at 92% 92%, oklch(0.85 0.11 278 / 80%) 0%, transparent 70%);
+      radial-gradient(52% 34% at 12% -4%, oklch(0.93 0.035 268 / 55%) 0%, transparent 72%),
+      radial-gradient(46% 30% at 96% 104%, oklch(0.94 0.03 205 / 45%) 0%, transparent 74%);
     background-attachment: fixed;
     background-repeat: no-repeat;
+    letter-spacing: 0.005em;
   }
 
-  /* 玻璃卡片：所有卡片背景自动带柔光模糊 */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
   [class*="bg-card"],
   [class*="bg-sidebar"],
   [class*="bg-popover"] {
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
@@ -157,27 +165,25 @@
   text-wrap: balance;
 }
 
-/* 柔光玻璃层 */
+/* 轻玻璃层：白、细边、极淡投影 */
 @utility glass {
-  background: oklch(1 0 0 / 60%);
-  border: 1px solid oklch(1 0 0 / 70%);
-  box-shadow:
-    0 1px 0 0 oklch(1 0 0 / 80%) inset,
-    0 18px 40px -24px oklch(0.4 0.08 275 / 35%);
-  backdrop-filter: blur(18px) saturate(140%);
+  background: oklch(1 0 0 / 78%);
+  border: 1px solid oklch(0.3 0.02 275 / 7%);
+  box-shadow: 0 16px 40px -32px oklch(0.3 0.03 275 / 40%);
+  backdrop-filter: blur(14px);
 }
 
-/* 柔和渐变色块（用于强调卡片） */
+/* 极淡的色调提示，仅用于强调一处 */
 @utility tint-sky {
-  background-image: linear-gradient(140deg, oklch(0.93 0.06 215 / 85%), oklch(0.97 0.03 255 / 75%));
+  background-image: linear-gradient(140deg, oklch(0.975 0.014 215 / 90%), oklch(0.995 0.004 260 / 80%));
 }
 
 @utility tint-lilac {
-  background-image: linear-gradient(140deg, oklch(0.92 0.07 285 / 85%), oklch(0.97 0.03 320 / 70%));
+  background-image: linear-gradient(140deg, oklch(0.972 0.018 280 / 90%), oklch(0.995 0.004 300 / 80%));
 }
 
 @utility tint-peach {
-  background-image: linear-gradient(140deg, oklch(0.94 0.06 60 / 85%), oklch(0.97 0.03 20 / 70%));
+  background-image: linear-gradient(140deg, oklch(0.978 0.016 60 / 90%), oklch(0.995 0.004 30 / 80%));
 }
 
 /* 时间线竖线 */
@@ -193,3 +199,4 @@
     background: var(--color-border);
   }
 }
+
