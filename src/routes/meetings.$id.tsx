@@ -10,10 +10,24 @@ import {
   ScrollText,
   Lightbulb,
   FlaskConical,
+  LayoutGrid,
+  Handshake,
+  Users,
+  Clock,
+  ArrowRight,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { fetchRecording, fmtDuration, fmtMs, SOURCE_LABEL, type MindmapNode } from "@/lib/data";
+import {
+  fetchRecording,
+  fmtDuration,
+  fmtMs,
+  SOURCE_LABEL,
+  type MindmapNode,
+  type CommitmentRow,
+  type RecordingRow,
+  type SegmentRow,
+} from "@/lib/data";
 import { generateDeepResearch } from "@/lib/recording.functions";
 import { supabase } from "@/integrations/supabase/client";
 
