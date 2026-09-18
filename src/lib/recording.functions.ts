@@ -294,6 +294,7 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
     if (structured.events.length > 0) {
       await context.supabase.from("events").insert(
         structured.events.map((e) => ({
+          user_id: context.userId,
           occurred_at: now,
           title: e.title,
           summary: e.summary,
@@ -305,7 +306,9 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
     if (structured.todos.length > 0) {
       await context.supabase
         .from("todos")
-        .insert(structured.todos.map((t) => ({ title: t.title, source: "passive" })));
+        .insert(
+          structured.todos.map((t) => ({ user_id: context.userId, title: t.title, source: "passive" })),
+        );
     }
     if (structured.emotion) {
       await context.supabase.from("emotion_points").insert({
