@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AskRouteImport } from './routes/ask'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MeetingsRouteImport } from './routes/meetings'
+import { Route as ReviewRouteImport } from './routes/review'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as MeetingsIdRouteImport } from './routes/meetings.$id'
 
@@ -36,6 +38,16 @@ const MeetingsRoute = MeetingsRouteImport.update({
   path: '/meetings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewRoute = ReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -52,6 +64,8 @@ export interface FileRoutesByFullPath {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/meetings': typeof MeetingsRouteWithChildren
+  '/review': typeof ReviewRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
@@ -60,6 +74,8 @@ export interface FileRoutesByTo {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/meetings': typeof MeetingsRouteWithChildren
+  '/review': typeof ReviewRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
@@ -69,21 +85,40 @@ export interface FileRoutesById {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/meetings': typeof MeetingsRouteWithChildren
+  '/review': typeof ReviewRoute
+  '/settings': typeof SettingsRoute
   '/api/chat': typeof ApiChatRoute
   '/meetings/$id': typeof MeetingsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/ask' | '/auth' | '/meetings' | '/api/chat' | '/meetings/$id'
+    | '/'
+    | '/ask'
+    | '/auth'
+    | '/meetings'
+    | '/review'
+    | '/settings'
+    | '/api/chat'
+    | '/meetings/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ask' | '/auth' | '/meetings' | '/api/chat' | '/meetings/$id'
+  to:
+    | '/'
+    | '/ask'
+    | '/auth'
+    | '/meetings'
+    | '/review'
+    | '/settings'
+    | '/api/chat'
+    | '/meetings/$id'
   id:
     | '__root__'
     | '/'
     | '/ask'
     | '/auth'
     | '/meetings'
+    | '/review'
+    | '/settings'
     | '/api/chat'
     | '/meetings/$id'
   fileRoutesById: FileRoutesById
@@ -93,6 +128,8 @@ export interface RootRouteChildren {
   AskRoute: typeof AskRoute
   AuthRoute: typeof AuthRoute
   MeetingsRoute: typeof MeetingsRouteWithChildren
+  ReviewRoute: typeof ReviewRoute
+  SettingsRoute: typeof SettingsRoute
   ApiChatRoute: typeof ApiChatRoute
 }
 
@@ -124,6 +161,20 @@ declare module '@tanstack/react-router' {
       path: '/meetings'
       fullPath: '/meetings'
       preLoaderRoute: typeof MeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review': {
+      id: '/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof ReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -160,6 +211,8 @@ const rootRouteChildren: RootRouteChildren = {
   AskRoute: AskRoute,
   AuthRoute: AuthRoute,
   MeetingsRoute: MeetingsRouteWithChildren,
+  ReviewRoute: ReviewRoute,
+  SettingsRoute: SettingsRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
