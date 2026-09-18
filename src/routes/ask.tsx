@@ -65,7 +65,7 @@ function AskPage() {
         .map((p) => (p.type === "text" ? p.text : ""))
         .join("")
         .trim();
-      if (text) await supabase.from("chat_messages").insert({ role: "assistant", content: text });
+      if (text) await supabase.from("chat_messages").insert({ role: "assistant", content: text, user_id: user.id });
     },
   });
 
@@ -97,7 +97,7 @@ function AskPage() {
   async function handleSubmit(message: { text?: string }) {
     const text = (message.text ?? "").trim();
     if (!text || isLoading) return;
-    if (user) await supabase.from("chat_messages").insert({ role: "user", content: text });
+    if (user) await supabase.from("chat_messages").insert({ role: "user", content: text, user_id: user.id });
     await sendMessage({ text });
   }
 

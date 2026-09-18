@@ -24,7 +24,6 @@ export const Route = createFileRoute("/api/chat")({
               fetch: (input, init) => {
                 const h = new Headers(init?.headers);
                 h.set("Authorization", auth);
-                if (pubKey.startsWith("sb_")) h.delete("apikey") && h.set("apikey", pubKey);
                 h.set("apikey", pubKey);
                 return fetch(input, { ...init, headers: h });
               },
