@@ -1,7 +1,16 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ShieldCheck, Radio, Mic, Watch, Trash2, LogOut } from "lucide-react";
+import {
+  ShieldCheck,
+  Radio,
+  Mic,
+  Watch,
+  Trash2,
+  LogOut,
+  CalendarDays,
+  Languages,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
