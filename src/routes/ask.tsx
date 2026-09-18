@@ -149,9 +149,73 @@ function AskPage() {
         </Conversation>
 
         <div className="pb-4 pt-2">
+          {selected.length > 0 && (
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] text-muted-foreground">只看这些录音：</span>
+              {selected.map((s) => (
+                <span
+                  key={s.id}
+                  className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] text-primary"
+                >
+                  @{s.title}
+                  <button onClick={() => setSelected((p) => p.filter((x) => x.id !== s.id))}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          {picker && (
+            <div className="mb-2 max-h-56 overflow-y-auto rounded-xl border border-border bg-card p-2">
+              {(recordings ?? []).length === 0 && (
+                <p className="px-2 py-4 text-center text-xs text-muted-foreground">还没有录音可以指定。</p>
+              )}
+              {(recordings ?? []).map((r) => {
+                const on = selected.some((s) => s.id === r.id);
+                return (
+                  <button
+                    key={r.id}
+                    onClick={() => {
+                      setSelected((p) =>
+                        on ? p.filter((x) => x.id !== r.id) : [...p, { id: r.id, title: r.title }].slice(-5),
+                      );
+                      setPicker(false);
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs transition-colors ${
+                      on ? "bg-primary/10 text-primary" : "hover:bg-accent/60"
+                    }`}
+                  >
+                    <Mic className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                    <span className="truncate">{r.title}</span>
+                    <span className="ml-auto shrink-0 font-mono text-[10px] text-muted-foreground">
+                      {new Date(r.occurred_at).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" })}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <PromptInput onSubmit={handleSubmit}>
-            <PromptInputTextarea placeholder="问问你的待办、会议、情绪或身体状态…" />
-            <PromptInputFooter className="justify-end">
+            <PromptInputTextarea
+              placeholder={
+                selected.length > 0
+                  ? "针对指定录音提问…"
+                  : "问问你的待办、会议、情绪或身体状态，或用 @ 指定某条录音…"
+              }
+            />
+            <PromptInputFooter className="justify-between">
+              <button
+                type="button"
+                onClick={() => setPicker((v) => !v)}
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+                  picker || selected.length > 0
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <AtSign className="h-3.5 w-3.5" />
+                指定录音
+              </button>
               <PromptInputSubmit status={status} disabled={isLoading || !token} />
             </PromptInputFooter>
           </PromptInput>
