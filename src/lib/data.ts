@@ -116,6 +116,104 @@ export async function fetchGrowthData() {
   };
 }
 
+export type TrendDay = {
+  day: string;
+  label: string;
+  keptRate: number | null;
+  mood: number | null;
+  voiceShare: number | null;
+  meetings: number;
+};
+
+/** 近 7 天：承诺兑现率、情绪水平、会议里我的发言占比 */
+export async function fetchWeeklyTrend(): Promise<TrendDay[]> {
+  const days: TrendDay[] = [];
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - 6);
+
+  const [commitments, emotions, recordings] = await Promise.all([
+    supabase.from("commitments").select("id, created_at, due_at, done"),
+    supabase
+      .from("emotion_points")
+      .select("recorded_at, valence")
+      .gte("recorded_at", start.toISOString()),
+    supabase
+      .from("recordings")
+      .select("id, occurred_at")
+      .gte("occurred_at", start.toISOString()),
+  ]);
+
+  const recs = (recordings.data ?? []) as { id: string; occurred_at: string }[];
+  let segs: { recording_id: string; speaker_label: string; text: string }[] = [];
+  if (recs.length) {
+    const { data } = await supabase
+      .from("transcript_segments")
+      .select("recording_id, speaker_label, text")
+      .in(
+        "recording_id",
+        recs.map((r) => r.id),
+      );
+    segs = (data ?? []) as typeof segs;
+  }
+
+  const coms = (commitments.data ?? []) as {
+    created_at: string;
+    due_at: string | null;
+    done: boolean;
+  }[];
+  const emos = (emotions.data ?? []) as { recorded_at: string; valence: number }[];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const end = new Date(d);
+    end.setDate(d.getDate() + 1);
+    const key = fmtDate(d);
+
+    // 截至当天已存在的承诺的兑现率
+    const pool = coms.filter((c) => new Date(c.created_at) < end);
+    const keptRate = pool.length
+      ? Math.round((pool.filter((c) => c.done).length / pool.length) * 100)
+      : null;
+
+    // 当天情绪（valence -2..2 映射到 0..100）
+    const dayEmos = emos.filter((e) => {
+      const t = new Date(e.recorded_at);
+      return t >= d && t < end;
+    });
+    const mood = dayEmos.length
+      ? Math.round(
+          (dayEmos.reduce((a, e) => a + (e.valence + 2) / 4, 0) / dayEmos.length) * 100,
+        )
+      : null;
+
+    // 当天会议里「说话人 1」（本人）的字数占比
+    const dayRecIds = recs
+      .filter((r) => {
+        const t = new Date(r.occurred_at);
+        return t >= d && t < end;
+      })
+      .map((r) => r.id);
+    const daySegs = segs.filter((s) => dayRecIds.includes(s.recording_id));
+    const total = daySegs.reduce((a, s) => a + s.text.length, 0);
+    const own = daySegs
+      .filter((s) => s.speaker_label.includes("1"))
+      .reduce((a, s) => a + s.text.length, 0);
+    const voiceShare = total ? Math.round((own / total) * 100) : null;
+
+    days.push({
+      day: key,
+      label: `${d.getMonth() + 1}/${d.getDate()}`,
+      keptRate,
+      mood,
+      voiceShare,
+      meetings: dayRecIds.length,
+    });
+  }
+  return days;
+}
+
 export async function fetchTodayData() {
   const since = new Date();
   since.setHours(0, 0, 0, 0);

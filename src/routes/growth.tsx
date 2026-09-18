@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { fetchGrowthData, type CommitmentRow } from "@/lib/data";
+import { fetchGrowthData, fetchWeeklyTrend, type CommitmentRow } from "@/lib/data";
 import { generateGrowthReport } from "@/lib/growth.functions";
 
 export const Route = createFileRoute("/growth")({
@@ -108,6 +108,11 @@ function GrowthPage() {
           <Stat label="待我兑现" value={`${mine.filter((c) => !isDone(c)).length}`} hint="件" />
           <Stat label="已逾期" value={`${overdue}`} hint={overdue ? "需要今天处理" : "保持得不错"} />
         </div>
+
+        {/* 周趋势 */}
+        <section className="mb-5">
+          <WeekTrend />
+        </section>
 
         {/* 承诺台账 */}
         <section className="mb-5 grid gap-4 md:grid-cols-2 md:gap-5">
@@ -284,4 +289,106 @@ function CommitList({
 
 function Empty({ text }: { text: string }) {
   return <p className="text-sm leading-relaxed text-muted-foreground">{text}</p>;
+}
+
+const SERIES = [
+  { key: "keptRate" as const, label: "承诺兑现率", color: "oklch(0.58 0.12 278)" },
+  { key: "mood" as const, label: "情绪水平", color: "oklch(0.72 0.11 205)" },
+  { key: "voiceShare" as const, label: "我的发言占比", color: "oklch(0.78 0.1 60)" },
+];
+
+function WeekTrend() {
+  const { data } = useQuery({ queryKey: ["weekly-trend"], queryFn: fetchWeeklyTrend });
+  const days = data ?? [];
+  const W = 320;
+  const H = 108;
+
+  function points(key: (typeof SERIES)[number]["key"]) {
+    return days
+      .map((d, i) => ({ i, v: d[key] }))
+      .filter((p): p is { i: number; v: number } => p.v !== null)
+      .map((p) => ({
+        x: 8 + (p.i / Math.max(days.length - 1, 1)) * (W - 16),
+        y: H - (p.v / 100) * H,
+      }));
+  }
+
+  function path(key: (typeof SERIES)[number]["key"]) {
+    const pts = points(key);
+    if (pts.length < 2) return "";
+    return pts
+      .map((p, n) => `${n === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(" ");
+  }
+
+  const hasData = days.some((d) => SERIES.some((s) => d[s.key] !== null));
+
+  return (
+    <Panel icon={TrendingUp} title="本周趋势">
+      {hasData ? (
+        <>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            {SERIES.map((s) => (
+              <span key={s.key} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.color }} />
+                {s.label}
+              </span>
+            ))}
+          </div>
+          <svg
+            viewBox={`0 -6 ${W} ${H + 12}`}
+            preserveAspectRatio="none"
+            className="mt-5 h-32 w-full"
+          >
+            {[0, 0.5, 1].map((g) => (
+              <line
+                key={g}
+                x1="0"
+                x2={W}
+                y1={H - g * H}
+                y2={H - g * H}
+                stroke="currentColor"
+                strokeWidth="0.5"
+                className="text-border"
+              />
+            ))}
+            {SERIES.flatMap((s) =>
+              points(s.key).map((p, n) => (
+                <circle
+                  key={`${s.key}-${n}`}
+                  cx={p.x}
+                  cy={p.y}
+                  r="2.6"
+                  fill={s.color}
+                  vectorEffect="non-scaling-stroke"
+                />
+              )),
+            )}
+            {SERIES.map((s) => (
+              <path
+                key={s.key}
+                d={path(s.key)}
+                fill="none"
+                stroke={s.color}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+          </svg>
+          <div className="mt-2 flex justify-between text-[10px] tabular-nums text-muted-foreground">
+            {days.map((d) => (
+              <span key={d.day}>{d.label}</span>
+            ))}
+          </div>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+            三条线放在一起看：兑现率掉下去的那几天，往往也是情绪走低、你在会上说得最多或最少的那几天。
+          </p>
+        </>
+      ) : (
+        <Empty text="再积累几天的记录，这里就会出现你的周趋势。" />
+      )}
+    </Panel>
+  );
 }
