@@ -62,20 +62,31 @@ function MeetingsPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
-        <header className="mb-6 flex items-end justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-bold">会议</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              深度录音 · 完整保存音频与逐字稿，仅你可见
-            </p>
+        <header className="mb-6">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h1 className="font-display text-[28px] font-bold tracking-tight">记录</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                深度录音 · 完整保存音频与逐字稿，仅你可见
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                to="/translate"
+                className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+              >
+                <Languages className="h-3.5 w-3.5" />
+                实时翻译
+              </Link>
+              <button
+                onClick={() => setRecording(true)}
+                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                深度录音
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setRecording(true)}
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            开始深度录音
-          </button>
         </header>
 
         <div className="mb-3 flex items-center gap-2 rounded-lg border border-input bg-card px-3 py-2">
