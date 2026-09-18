@@ -1,15 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Mic, ChevronRight, Loader2, AlertCircle, Plus, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Mic, ChevronRight, Loader2, AlertCircle, Plus, Search, X, Languages } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { fetchRecordings, fmtDuration, fmtTime, SOURCE_LABEL } from "@/lib/data";
 import { RecordDialog } from "@/components/RecordDialog";
 
 export const Route = createFileRoute("/meetings")({
-  validateSearch: (search: Record<string, unknown>): { rec?: string } => ({
-    rec: typeof search.rec === "string" ? search.rec : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { rec?: string } =>
+    typeof search["rec"] === "string" ? { rec: search["rec"] } : {},
   head: () => ({
     meta: [
       { title: "记录 · 回响" },
