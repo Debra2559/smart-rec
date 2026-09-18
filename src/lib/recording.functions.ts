@@ -76,6 +76,30 @@ export const processRecording = createServerFn({ method: "POST" })
             insights: z
               .array(z.object({ title: z.string(), text: z.string() }))
               .describe("2-4 张「顿悟」卡片：这场对话里最值得停下来想的洞察，title 是一句金句，text 是 60 字以内解释"),
+            commitments: z
+              .array(
+                z.object({
+                  direction: z.enum(["mine", "theirs"]),
+                  text: z.string(),
+                  counterpart: z.string(),
+                  due: z.string(),
+                }),
+              )
+              .describe(
+                "对话里说出口的承诺。direction=mine 表示用户答应别人，theirs 表示别人答应用户；counterpart 是对方称呼；due 为 YYYY-MM-DD，无法确定时填空字符串",
+              ),
+            people: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  relation: z.string(),
+                  context: z.string(),
+                  follow_up: z.string(),
+                }),
+              )
+              .describe(
+                "对话里出现的关键人物。relation 如「直属上级」「跨部门同事」；context 是 40 字以内的关系观察；follow_up 是建议的下一步，没有就填空字符串",
+              ),
             research_intro: z
               .string()
               .describe("一段 80 字以内的开场，说明从这场对话里看到的关键张力，用第二人称对用户说"),
