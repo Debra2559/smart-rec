@@ -18,8 +18,8 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("tenghuijin@163.com");
+  const [password, setPassword] = useState("tenghuijin@163.com");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
