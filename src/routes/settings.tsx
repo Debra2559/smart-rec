@@ -10,6 +10,7 @@ import {
   LogOut,
   CalendarDays,
   Languages,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -50,6 +51,13 @@ function SettingsPage() {
         <p className="mb-5 text-sm text-muted-foreground">{user?.email}</p>
 
         <div className="mb-6 grid grid-cols-2 gap-3">
+          <Link
+            to="/knowledge"
+            className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            <BookOpen className="h-4 w-4 text-primary" />
+            知识库
+          </Link>
           <Link
             to="/review"
             className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"

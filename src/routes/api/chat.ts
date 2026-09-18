@@ -33,14 +33,17 @@ export const Route = createFileRoute("/api/chat")({
               },
             },
           });
-          const [events, todos, recordings, health, emotions] = await Promise.all([
+          const [events, todos, recordings, health, emotions, knowledge] = await Promise.all([
             sb.from("events").select("occurred_at, title, summary, category").order("occurred_at", { ascending: false }).limit(30),
             sb.from("todos").select("title, due_at, done, source").order("created_at", { ascending: false }).limit(30),
             sb.from("recordings").select("occurred_at, title, summary, decisions").eq("status", "done").order("occurred_at", { ascending: false }).limit(10),
             sb.from("health_metrics").select("recorded_at, metric, value, unit").order("recorded_at", { ascending: false }).limit(40),
             sb.from("emotion_points").select("recorded_at, valence, label, note").order("recorded_at", { ascending: false }).limit(20),
+            sb.from("knowledge_items").select("category, title, content, tags").order("created_at", { ascending: false }).limit(120),
           ]);
           const parts = [
+            "## 个人知识库（关于用户本人的长期事实，优先参考）",
+            ...(knowledge.data ?? []).map((k) => `- [${k.category}] ${k.title}：${k.content}`),
             "## 事件时间线",
             ...(events.data ?? []).map((e) => `- [${e.occurred_at}] ${e.title}：${e.summary}`),
             "## 待办",

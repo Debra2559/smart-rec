@@ -190,3 +190,32 @@ export function fmtMs(ms: number) {
 export function fmtDate(d: Date) {
   return d.toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" });
 }
+
+export type KnowledgeRow = {
+  id: string;
+  user_id: string | null;
+  category: string;
+  title: string;
+  content: string;
+  source: string;
+  source_name: string | null;
+  tags: string[];
+  created_at: string;
+};
+
+export const KNOWLEDGE_CATEGORY_LABEL: Record<string, string> = {
+  profile: "个人档案",
+  preference: "偏好习惯",
+  work: "工作目标",
+  people: "人际关系",
+  health: "身体状况",
+  other: "其他",
+};
+
+export async function fetchKnowledge() {
+  const { data } = await supabase
+    .from("knowledge_items")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return (data ?? []) as unknown as KnowledgeRow[];
+}

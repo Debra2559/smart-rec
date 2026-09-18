@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AskRouteImport } from './routes/ask'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as GrowthRouteImport } from './routes/growth'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -38,6 +39,11 @@ const AuthRoute = AuthRouteImport.update({
 const GrowthRoute = GrowthRouteImport.update({
   id: '/growth',
   path: '/growth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeetingsRoute = MeetingsRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
+  '/knowledge': typeof KnowledgeRoute
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
+  '/knowledge': typeof KnowledgeRoute
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/ask': typeof AskRoute
   '/auth': typeof AuthRoute
   '/growth': typeof GrowthRoute
+  '/knowledge': typeof KnowledgeRoute
   '/meetings': typeof MeetingsRouteWithChildren
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/ask'
     | '/auth'
     | '/growth'
+    | '/knowledge'
     | '/meetings'
     | '/review'
     | '/settings'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/ask'
     | '/auth'
     | '/growth'
+    | '/knowledge'
     | '/meetings'
     | '/review'
     | '/settings'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/ask'
     | '/auth'
     | '/growth'
+    | '/knowledge'
     | '/meetings'
     | '/review'
     | '/settings'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AskRoute: typeof AskRoute
   AuthRoute: typeof AuthRoute
   GrowthRoute: typeof GrowthRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   MeetingsRoute: typeof MeetingsRouteWithChildren
   ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/growth'
       fullPath: '/growth'
       preLoaderRoute: typeof GrowthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meetings': {
@@ -251,6 +271,7 @@ const rootRouteChildren: RootRouteChildren = {
   AskRoute: AskRoute,
   AuthRoute: AuthRoute,
   GrowthRoute: GrowthRoute,
+  KnowledgeRoute: KnowledgeRoute,
   MeetingsRoute: MeetingsRouteWithChildren,
   ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
