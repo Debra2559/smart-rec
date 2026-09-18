@@ -72,7 +72,7 @@ function ReviewPage() {
     <AppShell>
       <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
         <header className="mb-6 flex items-end justify-between">
-          <h1 className="font-display text-3xl font-bold">回顾</h1>
+          <h1 className="font-display text-3xl font-semibold">回顾</h1>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMonth(new Date(year, mon - 1, 1))}
@@ -80,7 +80,7 @@ function ReviewPage() {
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="min-w-24 text-center font-mono text-sm">
+            <span className="min-w-24 text-center text-sm font-medium tabular-nums">
               {year} 年 {mon + 1} 月
             </span>
             <button
@@ -115,7 +115,7 @@ function ReviewPage() {
                         : "hover:bg-accent"
                   }`}
                 >
-                  <span className="font-mono text-xs">{day}</span>
+                  <span className="text-xs tabular-nums">{day}</span>
                   {items.length > 0 && (
                     <span className="mt-1 flex gap-0.5">
                       {items.slice(0, 3).map((it, j) => (
@@ -142,7 +142,7 @@ function ReviewPage() {
             <div className="space-y-3">
               {selectedItems.map((it, i) => (
                 <div key={i} className="flex items-baseline gap-3 text-sm">
-                  <span className="font-mono text-xs text-primary">{it.time}</span>
+                  <span className="text-xs tabular-nums text-primary">{it.time}</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] ${
                       it.kind === "meeting" ? "bg-chart-2/20 text-chart-2" : "bg-secondary text-secondary-foreground"

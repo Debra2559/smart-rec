@@ -65,7 +65,7 @@ function MeetingsPage() {
         <header className="mb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="font-display text-[28px] font-bold tracking-tight">记录</h1>
+              <h1 className="font-display text-[28px] font-semibold">记录</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 深度录音 · 完整保存音频与逐字稿，仅你可见
               </p>
@@ -80,7 +80,7 @@ function MeetingsPage() {
               </Link>
               <button
                 onClick={() => setRecording(true)}
-                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90 sm:flex-none"
+                className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-primary px-4 py-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:flex-none"
               >
                 <Plus className="h-3.5 w-3.5" />
                 深度录音
@@ -167,8 +167,8 @@ function MeetingsPage() {
                 )}
               </div>
               <div className="shrink-0 text-right">
-                <div className="font-mono text-xs text-foreground/80">{fmtDuration(r.duration_sec)}</div>
-                <div className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+                <div className="text-xs tabular-nums text-foreground/80">{fmtDuration(r.duration_sec)}</div>
+                <div className="mt-0.5 text-[10px] tabular-nums text-muted-foreground">
                   {new Date(r.occurred_at).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" })} {fmtTime(r.occurred_at)}
                 </div>
               </div>

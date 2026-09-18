@@ -46,7 +46,7 @@ function SettingsPage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-        <h1 className="mb-1 font-display text-[28px] font-bold tracking-tight">我的</h1>
+        <h1 className="mb-1 font-display text-[28px] font-semibold">我的</h1>
         <p className="mb-5 text-sm text-muted-foreground">{user?.email}</p>
 
         <div className="mb-6 grid grid-cols-2 gap-3">

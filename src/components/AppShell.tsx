@@ -54,7 +54,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-2.5 px-5 pt-6 pb-7">
           <img src={logo} alt="回响" className="h-8 w-8" />
           <div>
-            <div className="font-display text-lg font-bold leading-none tracking-tight">回响</div>
+            <div className="font-display text-lg font-semibold leading-none">回响</div>
             <div className="mt-1 text-[10px] tracking-widest text-muted-foreground">
               职场第二大脑
             </div>
@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               to={item.to}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                 isActive(item.to)
-                  ? "bg-accent font-semibold text-accent-foreground"
+                  ? "bg-accent font-medium text-accent-foreground"
                   : "text-sidebar-foreground/70 hover:bg-secondary hover:text-sidebar-foreground"
               }`}
             >
@@ -84,7 +84,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               to={item.to}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                 isActive(item.to)
-                  ? "bg-accent font-semibold text-accent-foreground"
+                  ? "bg-accent font-medium text-accent-foreground"
                   : "text-sidebar-foreground/70 hover:bg-secondary hover:text-sidebar-foreground"
               }`}
             >
@@ -128,7 +128,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-label="开始深度录音"
             className="absolute -top-6 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background/90 shadow-[0_10px_26px_-14px_oklch(0.4_0.08_278/50%)] transition-transform active:scale-95"
           >
-            <Plus className="h-5 w-5" strokeWidth={2} />
+            <Plus className="h-5 w-5" />
           </Link>
 
         </div>

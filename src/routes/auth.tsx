@@ -52,7 +52,7 @@ function AuthPage() {
       <div className="w-full max-w-sm">
         <div className="mb-10 text-center">
           <img src={logo} alt="回响" className="mx-auto h-16 w-16" />
-          <h1 className="mt-4 font-display text-3xl font-bold">回响</h1>
+          <h1 className="mt-4 font-display text-3xl font-semibold">回响</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             听得见会议，记得住生活，读得懂身体。
           </p>
