@@ -162,17 +162,23 @@ export async function fetchRecordings() {
 }
 
 export async function fetchRecording(id: string) {
-  const [{ data: rec }, { data: segs }] = await Promise.all([
+  const [{ data: rec }, { data: segs }, { data: coms }] = await Promise.all([
     supabase.from("recordings").select("*").eq("id", id).maybeSingle(),
     supabase
       .from("transcript_segments")
       .select("*")
       .eq("recording_id", id)
       .order("seq"),
+    supabase
+      .from("commitments")
+      .select("*")
+      .eq("recording_id", id)
+      .order("created_at"),
   ]);
   return {
     recording: (rec ?? null) as unknown as RecordingRow | null,
     segments: (segs ?? []) as SegmentRow[],
+    commitments: (coms ?? []) as unknown as CommitmentRow[],
   };
 }
 
