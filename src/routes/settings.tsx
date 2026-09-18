@@ -10,7 +10,6 @@ import {
   LogOut,
   CalendarDays,
   Languages,
-  Sprout,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
