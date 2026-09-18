@@ -19,12 +19,11 @@ import logo from "@/assets/logo.png";
 const NAV = [
   { to: "/", label: "今天", icon: LayoutGrid },
   { to: "/meetings", label: "记录", icon: Mic },
-  { to: "/ask", label: "问答", icon: MessageCircle },
+  { to: "/growth", label: "成长", icon: Sprout },
   { to: "/settings", label: "我的", icon: User },
 ] as const;
 
 const SECONDARY = [
-  { to: "/growth", label: "成长", icon: Sprout },
   { to: "/translate", label: "实时翻译", icon: Languages },
   { to: "/review", label: "月度回顾", icon: CalendarDays },
 ] as const;
@@ -114,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* 底部导航（移动端）· 4 个标签 + 中央录音键 */}
+      {/* 底部导航（移动端）· 4 个标签 + 中央问答键 */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-sidebar-border bg-sidebar/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
         <div className="relative flex items-stretch">
           {NAV.slice(0, 2).map((item) => (
