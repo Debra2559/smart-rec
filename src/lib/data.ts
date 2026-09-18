@@ -74,6 +74,48 @@ export type SegmentRow = {
   text: string;
 };
 
+export type CommitmentRow = {
+  id: string;
+  user_id: string | null;
+  direction: string;
+  text: string;
+  counterpart: string;
+  due_at: string | null;
+  done: boolean;
+  recording_id: string | null;
+};
+export type PersonRow = {
+  id: string;
+  user_id: string | null;
+  name: string;
+  relation: string;
+  context: string;
+  follow_up: string | null;
+  mentions: number;
+  last_seen_at: string;
+};
+export type GrowthReportRow = {
+  id: string;
+  period_start: string;
+  content: string;
+  highlights: string[];
+  habits: string[];
+  created_at: string;
+};
+
+export async function fetchGrowthData() {
+  const [commitments, people, reports] = await Promise.all([
+    supabase.from("commitments").select("*").order("due_at", { nullsFirst: false }),
+    supabase.from("people").select("*").order("mentions", { ascending: false }),
+    supabase.from("growth_reports").select("*").order("created_at", { ascending: false }).limit(1),
+  ]);
+  return {
+    commitments: (commitments.data ?? []) as unknown as CommitmentRow[],
+    people: (people.data ?? []) as unknown as PersonRow[],
+    report: ((reports.data ?? [])[0] ?? null) as unknown as GrowthReportRow | null,
+  };
+}
+
 export async function fetchTodayData() {
   const since = new Date();
   since.setHours(0, 0, 0, 0);
