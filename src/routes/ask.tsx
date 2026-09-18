@@ -42,18 +42,23 @@ function AskPage() {
   const { user } = useAuth();
   const [token, setToken] = useState<string | null>(null);
   const loadedRef = useRef(false);
+  const [picker, setPicker] = useState(false);
+  const [selected, setSelected] = useState<{ id: string; title: string }[]>([]);
+  const { data: recordings } = useQuery({ queryKey: ["recordings"], queryFn: fetchRecordings });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setToken(data.session?.access_token ?? null));
   }, []);
 
+  const selectedIds = selected.map((s) => s.id).join(",");
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: { recordingIds: selectedIds ? selectedIds.split(",") : [] },
       }),
-    [token],
+    [token, selectedIds],
   );
 
   const { messages, sendMessage, status } = useChat({
