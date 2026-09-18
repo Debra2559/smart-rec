@@ -10,6 +10,7 @@ import {
   LogOut,
   CalendarDays,
   Languages,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
