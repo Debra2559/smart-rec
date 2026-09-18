@@ -119,7 +119,7 @@ export const processRecording = createServerFn({ method: "POST" })
             }),
           }),
         }),
-        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 起标题与话题标签；2) 按语义将全文切分为带时间码的段落（单发言人即可）；3) 150 字以内摘要；4) 决议与行动项；5) 顿悟卡片；6) 深度研究开场与选题；7) 三级思维导图。\n\n转写全文：\n${text}`,
+        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 起标题与话题标签；2) 按语义将全文切分为带时间码的段落（单发言人即可）；3) 150 字以内摘要；4) 决议与行动项；5) 顿悟卡片；6) 深度研究开场与选题；7) 三级思维导图；8) 双向承诺（我答应别人的 / 别人答应我的）；9) 关键人物与关系观察。\n\n转写全文：\n${text}`,
         providerOptions: {
           openai: {
             forceReasoning: true,
@@ -149,6 +149,7 @@ export const processRecording = createServerFn({ method: "POST" })
       const todos = structured.decisions
         .filter((d) => d.text.trim())
         .map((d) => ({
+          user_id: context.userId,
           title: d.text,
           source: "meeting",
           due_at: null as string | null,
@@ -156,6 +157,51 @@ export const processRecording = createServerFn({ method: "POST" })
       if (todos.length > 0) {
         await context.supabase.from("todos").insert(todos);
       }
+
+      // 双向承诺台账
+      const commitments = structured.commitments
+        .filter((c) => c.text.trim())
+        .map((c) => ({
+          user_id: context.userId,
+          direction: c.direction,
+          text: c.text,
+          counterpart: c.counterpart ?? "",
+          due_at: /^\d{4}-\d{2}-\d{2}$/.test(c.due) ? new Date(`${c.due}T12:00:00Z`).toISOString() : null,
+          recording_id: data.recordingId,
+        }));
+      if (commitments.length > 0) {
+        await context.supabase.from("commitments").insert(commitments);
+      }
+
+      // 关键人物：已存在则累计提及次数，否则新建
+      for (const p of structured.people.filter((p) => p.name.trim())) {
+        const { data: existing } = await context.supabase
+          .from("people")
+          .select("id, mentions")
+          .eq("user_id", context.userId)
+          .eq("name", p.name)
+          .maybeSingle();
+        if (existing) {
+          await context.supabase
+            .from("people")
+            .update({
+              mentions: (existing.mentions ?? 1) + 1,
+              context: p.context || undefined,
+              follow_up: p.follow_up || null,
+              last_seen_at: new Date().toISOString(),
+            })
+            .eq("id", existing.id);
+        } else {
+          await context.supabase.from("people").insert({
+            user_id: context.userId,
+            name: p.name,
+            relation: p.relation || "同事",
+            context: p.context ?? "",
+            follow_up: p.follow_up || null,
+          });
+        }
+      }
+
 
       await context.supabase
         .from("recordings")
