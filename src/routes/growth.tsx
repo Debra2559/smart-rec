@@ -303,18 +303,21 @@ function WeekTrend() {
   const W = 320;
   const H = 108;
 
-  function path(key: (typeof SERIES)[number]["key"]) {
-    const pts = days
+  function points(key: (typeof SERIES)[number]["key"]) {
+    return days
       .map((d, i) => ({ i, v: d[key] }))
-      .filter((p): p is { i: number; v: number } => p.v !== null);
+      .filter((p): p is { i: number; v: number } => p.v !== null)
+      .map((p) => ({
+        x: (p.i / Math.max(days.length - 1, 1)) * W,
+        y: H - (p.v / 100) * H,
+      }));
+  }
+
+  function path(key: (typeof SERIES)[number]["key"]) {
+    const pts = points(key);
     if (pts.length < 2) return "";
     return pts
-      .map(
-        (p, n) =>
-          `${n === 0 ? "M" : "L"}${((p.i / Math.max(days.length - 1, 1)) * W).toFixed(1)},${(
-            H - (p.v / 100) * H
-          ).toFixed(1)}`,
-      )
+      .map((p, n) => `${n === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
       .join(" ");
   }
 
@@ -349,6 +352,18 @@ function WeekTrend() {
                 className="text-border"
               />
             ))}
+            {SERIES.flatMap((s) =>
+              points(s.key).map((p, n) => (
+                <circle
+                  key={`${s.key}-${n}`}
+                  cx={p.x}
+                  cy={p.y}
+                  r="2.6"
+                  fill={s.color}
+                  vectorEffect="non-scaling-stroke"
+                />
+              )),
+            )}
             {SERIES.map((s) => (
               <path
                 key={s.key}
