@@ -67,10 +67,21 @@ export const processRecording = createServerFn({ method: "POST" })
                 }),
               )
               .describe("按语义切分的逐字稿段落，单发言人时全部用「发言人 1」"),
+            title: z.string().describe("12 字以内、能概括这段对话主题的标题"),
+            tags: z.array(z.string()).describe("3-5 个话题标签，每个 2-6 字，如「商业化」「排期」"),
             summary: z.string().describe("150 字以内会议摘要"),
             decisions: z
               .array(z.object({ text: z.string(), owner: z.string(), due: z.string() }))
               .describe("明确的决议/行动项；due 无法确定时填空字符串"),
+            insights: z
+              .array(z.object({ title: z.string(), text: z.string() }))
+              .describe("2-4 张「顿悟」卡片：这场对话里最值得停下来想的洞察，title 是一句金句，text 是 60 字以内解释"),
+            research_intro: z
+              .string()
+              .describe("一段 80 字以内的开场，说明从这场对话里看到的关键张力，用第二人称对用户说"),
+            research_topics: z
+              .array(z.object({ title: z.string(), angle: z.string() }))
+              .describe("3-4 个值得展开做深度研究的选题，title 为选题名，angle 为切入角度一句话"),
             mindmap: z.object({
               label: z.string(),
               children: z
@@ -84,7 +95,7 @@ export const processRecording = createServerFn({ method: "POST" })
             }),
           }),
         }),
-        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 按语义将全文切分为带时间码的段落（单发言人即可）；2) 150 字以内摘要；3) 决议与行动项；4) 三级思维导图。\n\n转写全文：\n${text}`,
+        prompt: `这是一段会议录音的转写全文（总时长约 ${rec.duration_sec} 秒）。请完成：1) 起标题与话题标签；2) 按语义将全文切分为带时间码的段落（单发言人即可）；3) 150 字以内摘要；4) 决议与行动项；5) 顿悟卡片；6) 深度研究开场与选题；7) 三级思维导图。\n\n转写全文：\n${text}`,
         providerOptions: {
           openai: {
             forceReasoning: true,
@@ -126,8 +137,13 @@ export const processRecording = createServerFn({ method: "POST" })
         .from("recordings")
         .update({
           status: "done",
+          ...(structured.title?.trim() ? { title: structured.title.trim() } : {}),
+          tags: structured.tags.slice(0, 5),
           summary: structured.summary,
           decisions: structured.decisions,
+          insights: structured.insights,
+          research_intro: structured.research_intro,
+          research_topics: structured.research_topics,
           mindmap: structured.mindmap,
         })
         .eq("id", data.recordingId);
@@ -221,4 +237,92 @@ export const ingestPassiveAudio = createServerFn({ method: "POST" })
     }
     // 转写文本 text 到此随请求结束被丢弃，不落库、不落盘。
     return { ok: true, events: structured.events.length, todos: structured.todos.length };
+  });
+
+const ResearchInput = z.object({ recordingId: z.string(), topic: z.string().min(2) });
+
+/** 深度研究：基于这场对话的某个选题，生成一份长篇研究报告（Markdown） */
+export const generateDeepResearch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => ResearchInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const key = process.env["LOVABLE_API_KEY"];
+    if (!key) throw new Error("AI 服务未配置");
+
+    const { data: rec } = await context.supabase
+      .from("recordings")
+      .select("title, summary, decisions")
+      .eq("id", data.recordingId)
+      .single();
+    if (!rec) throw new Error("录音不存在");
+
+    const { data: segs } = await context.supabase
+      .from("transcript_segments")
+      .select("text")
+      .eq("recording_id", data.recordingId)
+      .order("seq")
+      .limit(400);
+    const transcript = (segs ?? []).map((s) => s.text).join("\n").slice(0, 24000);
+
+    const lovable = astraProvider(key);
+    const result = streamText({
+      model: lovable.responses("openai/gpt-6-astra"),
+      prompt: `你是一名资深行业研究员。请围绕选题「${data.topic}」写一份深度研究报告，素材来自用户的一场真实对话。\n\n要求：用 Markdown；包含「核心结论」「关键论证」「反面视角」「对你的建议」四个部分；结论要具体、可执行，不要空话；不要编造统计数字，无法确证的判断标注为推测。全文 900-1300 字。\n\n对话标题：${rec.title}\n对话摘要：${rec.summary ?? ""}\n对话内容节选：\n${transcript}`,
+      providerOptions: {
+        openai: {
+          forceReasoning: true,
+          reasoningEffort: "medium",
+          store: false,
+          include: ["reasoning.encrypted_content"],
+        },
+      },
+    });
+    const report = await result.text;
+
+    await context.supabase
+      .from("recordings")
+      .update({ research_report: report })
+      .eq("id", data.recordingId);
+
+    return { report };
+  });
+
+const TranslateInput = z.object({
+  audioBase64: z.string().min(100),
+  mimeType: z.string().default("audio/webm"),
+  targetLang: z.string().default("中文"),
+});
+
+/** 实时翻译：一段完整音频 → 原文 + 译文（不落库，由前端决定是否保存） */
+export const translateAudio = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => TranslateInput.parse(input))
+  .handler(async ({ data }) => {
+    const key = process.env["LOVABLE_API_KEY"];
+    if (!key) throw new Error("AI 服务未配置");
+
+    const bytes = Uint8Array.from(atob(data.audioBase64), (c) => c.charCodeAt(0));
+    const original = await transcribe(new Blob([bytes], { type: data.mimeType }), key);
+
+    const lovable = astraProvider(key);
+    const result = streamText({
+      model: lovable.responses("openai/gpt-6-astra"),
+      output: Output.object({
+        schema: z.object({
+          detected_lang: z.string().describe("原文语言，如「英语」「中文」「日语」"),
+          translated: z.string().describe("译文，只输出译文本身"),
+        }),
+      }),
+      prompt: `把下面这段口语转写翻译成${data.targetLang}。保持口语自然，不要解释、不要加注。\n\n原文：\n${original}`,
+      providerOptions: {
+        openai: {
+          forceReasoning: true,
+          reasoningEffort: "low",
+          store: false,
+          include: ["reasoning.encrypted_content"],
+        },
+      },
+    });
+    const out = await result.output;
+    return { original, translated: out.translated, detectedLang: out.detected_lang };
   });

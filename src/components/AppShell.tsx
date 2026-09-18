@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   Radio,
+  Languages,
 } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ import logo from "@/assets/logo.png";
 const NAV = [
   { to: "/", label: "今天", icon: Sun },
   { to: "/meetings", label: "会议", icon: Mic },
+  { to: "/translate", label: "翻译", icon: Languages },
   { to: "/ask", label: "问答", icon: MessageCircle },
   { to: "/review", label: "回顾", icon: CalendarDays },
   { to: "/settings", label: "设置", icon: Settings },

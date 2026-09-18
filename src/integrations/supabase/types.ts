@@ -183,10 +183,16 @@ export type Database = {
           decisions: Json
           duration_sec: number
           id: string
+          insights: Json
           mindmap: Json | null
           occurred_at: string
+          research_intro: string | null
+          research_report: string | null
+          research_topics: Json
+          source: string
           status: string
           summary: string | null
+          tags: string[]
           title: string
           user_id: string | null
         }
@@ -196,10 +202,16 @@ export type Database = {
           decisions?: Json
           duration_sec?: number
           id?: string
+          insights?: Json
           mindmap?: Json | null
           occurred_at?: string
+          research_intro?: string | null
+          research_report?: string | null
+          research_topics?: Json
+          source?: string
           status?: string
           summary?: string | null
+          tags?: string[]
           title: string
           user_id?: string | null
         }
@@ -209,10 +221,16 @@ export type Database = {
           decisions?: Json
           duration_sec?: number
           id?: string
+          insights?: Json
           mindmap?: Json | null
           occurred_at?: string
+          research_intro?: string | null
+          research_report?: string | null
+          research_topics?: Json
+          source?: string
           status?: string
           summary?: string | null
+          tags?: string[]
           title?: string
           user_id?: string | null
         }
@@ -309,6 +327,71 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      translation_lines: {
+        Row: {
+          created_at: string
+          id: string
+          original: string
+          seq: number
+          session_id: string
+          speaker: string
+          translated: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          original: string
+          seq?: number
+          session_id: string
+          speaker?: string
+          translated: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          original?: string
+          seq?: number
+          session_id?: string
+          speaker?: string
+          translated?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "translation_lines_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "translation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      translation_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          mode: string
+          source_lang: string
+          target_lang: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode?: string
+          source_lang?: string
+          target_lang?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: string
+          source_lang?: string
+          target_lang?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
