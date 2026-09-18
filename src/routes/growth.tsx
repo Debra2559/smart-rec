@@ -109,6 +109,11 @@ function GrowthPage() {
           <Stat label="已逾期" value={`${overdue}`} hint={overdue ? "需要今天处理" : "保持得不错"} />
         </div>
 
+        {/* 周趋势 */}
+        <section className="mb-5">
+          <WeekTrend />
+        </section>
+
         {/* 承诺台账 */}
         <section className="mb-5 grid gap-4 md:grid-cols-2 md:gap-5">
           <Panel icon={Handshake} title="我答应别人的">
