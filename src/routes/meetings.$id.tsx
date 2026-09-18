@@ -140,7 +140,7 @@ function MeetingDetailPage() {
           </div>
         )}
 
-        <div className="mb-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 [scrollbar-width:none] [&::-webkit-scrollbar]{display:none}">
+        <div className="mb-4 flex gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1 [scrollbar-width:none]">
           {([
             ["overview", "概览", LayoutGrid],
             ["transcript", "逐字稿", ScrollText],
